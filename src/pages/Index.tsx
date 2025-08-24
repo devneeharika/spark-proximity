@@ -72,9 +72,11 @@ const Index = () => {
                 <CardDescription>Add your interests and preferences</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="w-full" disabled>
-                  Coming Soon
-                </Button>
+                <Link to="/profile-setup">
+                  <Button className="w-full">
+                    Get Started
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
             
@@ -84,9 +86,11 @@ const Index = () => {
                 <CardDescription>Find people with matching interests</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="w-full" disabled>
-                  Coming Soon
-                </Button>
+                <Link to="/discovery">
+                  <Button className="w-full">
+                    Start Discovering
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
             
@@ -96,9 +100,11 @@ const Index = () => {
                 <CardDescription>Manage your connections and friends</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="w-full" disabled>
-                  Coming Soon
-                </Button>
+                <Link to="/connections">
+                  <Button className="w-full">
+                    View Connections
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>
