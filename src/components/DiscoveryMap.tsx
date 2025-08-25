@@ -123,14 +123,10 @@ const DiscoveryMap = ({ userLocation, matches = [], className }: DiscoveryMapPro
   };
 
   useEffect(() => {
-    // Try to get token from localStorage first
-    const savedToken = localStorage.getItem('mapbox_token');
-    if (savedToken) {
-      setMapboxToken(savedToken);
-      initializeMap(savedToken);
-    } else {
-      setShowTokenInput(true);
-    }
+    // Use the provided public token directly
+    const publicToken = 'pk.eyJ1IjoibmVlaGFyaWthdmFuZ2F2YXJhZ3UiLCJhIjoiY21lcWwyYTV5MGNqMzJrcHVla2MzOGExdCJ9.-7KDyeW2oTl4b09PgTmIOQ';
+    setMapboxToken(publicToken);
+    initializeMap(publicToken);
 
     return () => {
       map.current?.remove();
