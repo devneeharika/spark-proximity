@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import DiscoveryMap from '@/components/DiscoveryMap';
 import { ArrowLeft, MapPin, Heart, X, Users, Navigation } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -26,16 +27,24 @@ const Discovery = () => {
 
   useEffect(() => {
     if (user && userInterests.length > 0) {
-      if (location) {
-        setLocationEnabled(true);
-        // Use geolocation-based matching
-        findMatches({ maxDistance: 50, minSharedInterests: 1, limit: 20 });
-      } else {
-        // Fallback to interests-only matching
-        findMatches({ minSharedInterests: 2, limit: 20 });
-      }
+      const fetchMatches = async () => {
+        try {
+          if (location) {
+            setLocationEnabled(true);
+            // Use geolocation-based matching
+            await findMatches({ maxDistance: 50, minSharedInterests: 1, limit: 20 });
+          } else {
+            // Fallback to interests-only matching  
+            await findMatches({ minSharedInterests: 1, limit: 20 });
+          }
+        } catch (error) {
+          console.error('Error in discovery useEffect:', error);
+        }
+      };
+      
+      fetchMatches();
     }
-  }, [user, userInterests, location, findMatches]);
+  }, [user, userInterests, location]);
 
   const enableLocation = async () => {
     try {
@@ -151,8 +160,19 @@ const Discovery = () => {
           </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-md">
-        {loading ? (
+      <main className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Discovery Map */}
+        <div className="mb-8">
+          <DiscoveryMap 
+            userLocation={location} 
+            matches={matches}
+            className=""
+          />
+        </div>
+
+        {/* Matching Interface */}
+        <div className="max-w-md mx-auto">
+          {loading ? (
           <div className="text-center py-16">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
             <p className="mt-4 text-muted-foreground">Finding people with shared interests...</p>
@@ -264,6 +284,7 @@ const Discovery = () => {
             </Card>
           </div>
         )}
+        </div>
       </main>
     </div>
   );
