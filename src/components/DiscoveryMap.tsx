@@ -22,19 +22,26 @@ const DiscoveryMap = ({ userLocation, matches = [], className }: DiscoveryMapPro
   const initializeMap = (token: string) => {
     if (!mapContainer.current || !token) return;
 
+    // Clean up existing map
+    if (map.current) {
+      map.current.remove();
+    }
+
     try {
       mapboxgl.accessToken = token;
       
-      // Default center (San Francisco)
+      // Default center (San Francisco) or user location
       const center: [number, number] = userLocation 
         ? [userLocation.longitude, userLocation.latitude]
         : [-122.4194, 37.7749];
+
+      console.log('Initializing map with center:', center, 'userLocation:', userLocation);
 
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/light-v11',
         center: center,
-        zoom: userLocation ? 12 : 10,
+        zoom: userLocation ? 14 : 10,
         pitch: 45,
       });
 
@@ -48,9 +55,10 @@ const DiscoveryMap = ({ userLocation, matches = [], className }: DiscoveryMapPro
 
       // Add user location marker if available
       if (userLocation) {
+        console.log('Adding user location marker at:', userLocation);
         new mapboxgl.Marker({ color: '#8b5cf6' })
           .setLngLat([userLocation.longitude, userLocation.latitude])
-          .setPopup(new mapboxgl.Popup().setHTML('<p><strong>Your Location</strong></p>'))
+          .setPopup(new mapboxgl.Popup().setHTML('<p><strong>Your Location</strong><br/>Foster City, CA</p>'))
           .addTo(map.current);
 
         // Add radius circle for discovery area
@@ -126,19 +134,23 @@ const DiscoveryMap = ({ userLocation, matches = [], className }: DiscoveryMapPro
     // Use the provided public token directly
     const publicToken = 'pk.eyJ1IjoibmVlaGFyaWthdmFuZ2F2YXJhZ3UiLCJhIjoiY21lcWwyYTV5MGNqMzJrcHVla2MzOGExdCJ9.-7KDyeW2oTl4b09PgTmIOQ';
     setMapboxToken(publicToken);
+    
+    // Initialize map immediately, but it will re-center when location becomes available
     initializeMap(publicToken);
 
     return () => {
       map.current?.remove();
     };
-  }, []);
+  }, [userLocation]); // Re-initialize when userLocation changes
 
   useEffect(() => {
     if (initialized && map.current && userLocation) {
+      console.log('Centering map on user location:', userLocation);
       // Update map center when user location changes
       map.current.flyTo({
         center: [userLocation.longitude, userLocation.latitude],
-        zoom: 12
+        zoom: 14,
+        duration: 2000
       });
     }
   }, [userLocation, initialized]);
