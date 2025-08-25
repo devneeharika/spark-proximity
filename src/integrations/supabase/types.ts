@@ -165,7 +165,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_distance: {
+        Args: { lat1: number; lat2: number; lon1: number; lon2: number }
+        Returns: number
+      }
+      find_potential_matches: {
+        Args: {
+          limit_results?: number
+          max_distance_km?: number
+          user_id_param: string
+        }
+        Returns: {
+          avatar_url: string
+          bio: string
+          compatibility_score: number
+          display_name: string
+          distance_km: number
+          shared_interests_count: number
+          user_id: string
+          username: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
