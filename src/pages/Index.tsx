@@ -1,8 +1,9 @@
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Link } from 'react-router-dom';
-import { Loader2, LogOut, User } from 'lucide-react';
+import { Loader2, User, MapPin, Users, MessageCircle } from 'lucide-react';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
@@ -43,68 +44,105 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">PingMe</h1>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              <span className="text-sm">{user.email}</span>
-            </div>
-            <Button variant="outline" size="sm" onClick={signOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
-          </div>
+        <div className="container mx-auto px-4 py-4">
+          <h1 className="text-2xl font-bold text-center">PingMe</h1>
         </div>
       </header>
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold mb-4">Welcome back!</h2>
-          <p className="text-xl text-muted-foreground mb-8">
-            Ready to discover people with shared interests nearby?
-          </p>
-          
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-4xl mx-auto">
+      <main className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="space-y-6">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold mb-4">Welcome back!</h2>
+            <p className="text-xl text-muted-foreground mb-8">
+              Ready to discover people with shared interests nearby?
+            </p>
+          </div>
+
+          <Card>
+            <CardContent className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10">
+                  <AvatarFallback>
+                    {user?.email?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium">{user?.email}</p>
+                  <p className="text-sm text-muted-foreground">Welcome back!</p>
+                </div>
+              </div>
+              <Button variant="outline" onClick={signOut}>
+                Sign Out
+              </Button>
+            </CardContent>
+          </Card>
+
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader>
-                <CardTitle>Setup Profile</CardTitle>
-                <CardDescription>Add your interests and preferences</CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  Setup Profile
+                </CardTitle>
+                <CardDescription>
+                  Complete your profile and add interests
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link to="/profile-setup">
-                  <Button className="w-full">
-                    Get Started
-                  </Button>
-                </Link>
+                <Button asChild className="w-full">
+                  <Link to="/profile-setup">Get Started</Link>
+                </Button>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
-                <CardTitle>Discover Nearby</CardTitle>
-                <CardDescription>Find people with matching interests</CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  Discover Nearby
+                </CardTitle>
+                <CardDescription>
+                  Find people with shared interests around you
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link to="/discovery">
-                  <Button className="w-full">
-                    Start Discovering
-                  </Button>
-                </Link>
+                <Button asChild className="w-full">
+                  <Link to="/discovery">Explore</Link>
+                </Button>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader>
-                <CardTitle>Your Connections</CardTitle>
-                <CardDescription>Manage your connections and friends</CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5" />
+                  Your Connections
+                </CardTitle>
+                <CardDescription>
+                  View and manage your connections
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link to="/connections">
-                  <Button className="w-full">
-                    View Connections
-                  </Button>
-                </Link>
+                <Button asChild className="w-full">
+                  <Link to="/connections">View All</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MessageCircle className="h-5 w-5" />
+                  Messages
+                </CardTitle>
+                <CardDescription>
+                  Chat with your connections
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild className="w-full">
+                  <Link to="/messages">Open Messages</Link>
+                </Button>
               </CardContent>
             </Card>
           </div>

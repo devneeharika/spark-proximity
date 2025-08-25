@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Check, X, Clock, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -20,6 +20,7 @@ interface Connection {
     username: string;
     display_name: string;
     bio: string;
+    avatar_url: string | null;
   };
   shared_interests: Array<{
     name: string;
@@ -65,7 +66,7 @@ const Connections = () => {
       // Fetch profiles for all users
       const { data: allProfiles, error: profileError } = await supabase
         .from('profiles')
-        .select('user_id, username, display_name, bio')
+        .select('user_id, username, display_name, bio, avatar_url')
         .in('user_id', allUserIds);
 
       if (profileError) {
@@ -209,35 +210,46 @@ const Connections = () => {
               acceptedConnections.map((connection) => (
                 <Card key={connection.id}>
                   <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <Avatar className="h-12 w-12">
-                        <AvatarFallback>
-                          {connection.profile?.display_name?.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <h4 className="font-semibold">{connection.profile?.display_name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          @{connection.profile?.username}
-                        </p>
-                        {connection.profile?.bio && (
-                          <p className="text-sm mt-2">{connection.profile.bio}</p>
-                        )}
-                        {connection.shared_interests.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-3">
-                            {connection.shared_interests.slice(0, 3).map((interest, index) => (
-                              <Badge key={index} variant="secondary" className="text-xs">
-                                {interest.icon} {interest.name}
-                              </Badge>
-                            ))}
-                            {connection.shared_interests.length > 3 && (
-                              <Badge variant="outline" className="text-xs">
-                                +{connection.shared_interests.length - 3} more
-                              </Badge>
-                            )}
-                          </div>
-                        )}
+                  <div className="flex items-start gap-4">
+                    <Avatar className="h-12 w-12">
+                      {connection.profile?.avatar_url && (
+                        <AvatarImage src={connection.profile.avatar_url} />
+                      )}
+                      <AvatarFallback>
+                        {connection.profile?.display_name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <h4 className="font-semibold">{connection.profile?.display_name}</h4>
+                      <p className="text-sm text-muted-foreground">
+                        @{connection.profile?.username}
+                      </p>
+                      {connection.profile?.bio && (
+                        <p className="text-sm mt-2">{connection.profile.bio}</p>
+                      )}
+                      {connection.shared_interests.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-3">
+                          {connection.shared_interests.slice(0, 3).map((interest, index) => (
+                            <Badge key={index} variant="secondary" className="text-xs">
+                              {interest.icon} {interest.name}
+                            </Badge>
+                          ))}
+                          {connection.shared_interests.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{connection.shared_interests.length - 3} more
+                            </Badge>
+                          )}
+                        </div>
+                      )}
+                      <div className="flex gap-2 mt-4">
+                        <Button 
+                          size="sm" 
+                          onClick={() => navigate('/messages', { state: { recipientId: connection.requester_id === user?.id ? connection.receiver_id : connection.requester_id } })}
+                        >
+                          Message
+                        </Button>
                       </div>
+                    </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -260,12 +272,15 @@ const Connections = () => {
               incomingRequests.map((connection) => (
                 <Card key={connection.id}>
                   <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <Avatar className="h-12 w-12">
-                        <AvatarFallback>
-                          {connection.profile?.display_name?.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
+                  <div className="flex items-start gap-4">
+                    <Avatar className="h-12 w-12">
+                      {connection.profile?.avatar_url && (
+                        <AvatarImage src={connection.profile.avatar_url} />
+                      )}
+                      <AvatarFallback>
+                        {connection.profile?.display_name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                       <div className="flex-1">
                         <h4 className="font-semibold">{connection.profile?.display_name}</h4>
                         <p className="text-sm text-muted-foreground">
@@ -328,12 +343,15 @@ const Connections = () => {
               sentRequests.map((connection) => (
                 <Card key={connection.id}>
                   <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <Avatar className="h-12 w-12">
-                        <AvatarFallback>
-                          {connection.profile?.display_name?.charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
+                  <div className="flex items-start gap-4">
+                    <Avatar className="h-12 w-12">
+                      {connection.profile?.avatar_url && (
+                        <AvatarImage src={connection.profile.avatar_url} />
+                      )}
+                      <AvatarFallback>
+                        {connection.profile?.display_name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                       <div className="flex-1">
                         <h4 className="font-semibold">{connection.profile?.display_name}</h4>
                         <p className="text-sm text-muted-foreground">

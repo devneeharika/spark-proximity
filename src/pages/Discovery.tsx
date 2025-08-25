@@ -2,140 +2,69 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
+import { useMatching } from '@/hooks/useMatching';
+import { useGeolocation } from '@/hooks/useGeolocation';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { ArrowLeft, MapPin, Heart, X, Users } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ArrowLeft, MapPin, Heart, X, Users, Navigation } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-interface NearbyUser {
-  id: string;
-  username: string;
-  display_name: string;
-  bio: string;
-  shared_interests: Array<{
-    name: string;
-    icon: string;
-    category: string;
-  }>;
-}
+// Remove the old interface as we'll use the PotentialMatch from useMatching hook
 
 const Discovery = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { userInterests } = useProfile();
   const { toast } = useToast();
-  const [nearbyUsers, setNearbyUsers] = useState<NearbyUser[]>([]);
+  const { matches, loading, error, findMatches } = useMatching();
+  const { location, getCurrentLocation, requestLocationAndSave } = useGeolocation();
   const [currentUserIndex, setCurrentUserIndex] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [locationEnabled, setLocationEnabled] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      fetchNearbyUsers();
+    if (user && userInterests.length > 0) {
+      if (location) {
+        setLocationEnabled(true);
+        // Use geolocation-based matching
+        findMatches({ maxDistance: 50, minSharedInterests: 1, limit: 20 });
+      } else {
+        // Fallback to interests-only matching
+        findMatches({ minSharedInterests: 2, limit: 20 });
+      }
     }
-  }, [user, userInterests]);
+  }, [user, userInterests, location, findMatches]);
 
-  const fetchNearbyUsers = async () => {
-    if (!user || userInterests.length === 0) {
-      setLoading(false);
-      return;
-    }
-
+  const enableLocation = async () => {
     try {
-      // Get users with shared interests (simplified - in real app would use location)
-      const userInterestIds = userInterests.map(ui => ui.interest_id);
-      
-      const { data: potentialMatches, error } = await supabase
-        .from('user_interests')
-        .select(`
-          user_id,
-          interest:interests(name, icon, category)
-        `)
-        .in('interest_id', userInterestIds)
-        .neq('user_id', user.id);
-
-      if (error) {
-        console.error('Error fetching potential matches:', error);
-        return;
-      }
-
-      // Get profiles separately to avoid relation issues
-      const uniqueUserIds = [...new Set(potentialMatches?.map(m => m.user_id) || [])];
-      
-      const { data: profiles, error: profileError } = await supabase
-        .from('profiles')
-        .select('id, user_id, username, display_name, bio')
-        .in('user_id', uniqueUserIds);
-
-      if (profileError) {
-        console.error('Error fetching profiles:', profileError);
-        return;
-      }
-
-      // Create profile lookup
-      const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
-
-      // Group by user and calculate shared interests
-      const userMap = new Map<string, NearbyUser>();
-      
-      potentialMatches?.forEach((match) => {
-        const profile = profileMap.get(match.user_id);
-        if (!profile) return;
-        
-        const userId = match.user_id;
-        if (!userMap.has(userId)) {
-          userMap.set(userId, {
-            id: profile.id,
-            username: profile.username || 'Anonymous',
-            display_name: profile.display_name || 'User',
-            bio: profile.bio || '',
-            shared_interests: []
-          });
-        }
-        
-        const user = userMap.get(userId)!;
-        user.shared_interests.push({
-          name: match.interest.name,
-          icon: match.interest.icon || '',
-          category: match.interest.category
-        });
+      await requestLocationAndSave();
+      setLocationEnabled(true);
+      toast({
+        title: "Location Enabled",
+        description: "Now showing people nearby with shared interests!"
       });
-
-      // Filter out users with existing connections
-      const { data: existingConnections } = await supabase
-        .from('connections')
-        .select('receiver_id, requester_id')
-        .or(`requester_id.eq.${user.id},receiver_id.eq.${user.id}`);
-
-      const connectedUserIds = new Set(
-        existingConnections?.flatMap(conn => [conn.requester_id, conn.receiver_id]) || []
-      );
-
-      const filteredUsers = Array.from(userMap.values())
-        .filter(u => !connectedUserIds.has(u.id))
-        .filter(u => u.shared_interests.length >= 2); // At least 2 shared interests
-
-      setNearbyUsers(filteredUsers);
     } catch (error) {
-      console.error('Error fetching nearby users:', error);
-    } finally {
-      setLoading(false);
+      toast({
+        variant: "destructive",
+        title: "Location Error",
+        description: "Could not access location. Showing matches based on interests only."
+      });
     }
   };
 
   const handleConnect = async () => {
-    if (!user || currentUserIndex >= nearbyUsers.length) return;
+    if (!user || currentUserIndex >= matches.length) return;
 
-    const targetUser = nearbyUsers[currentUserIndex];
+    const targetUser = matches[currentUserIndex];
     
     try {
       const { error } = await supabase
         .from('connections')
         .insert({
           requester_id: user.id,
-          receiver_id: targetUser.id,
+          receiver_id: targetUser.user_id,
           status: 'pending'
         });
 
@@ -201,16 +130,25 @@ const Discovery = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-bold">Discover People</h1>
-          <div className="flex items-center gap-2 ml-auto">
-            <MapPin className="h-4 w-4" />
-            <span className="text-sm text-muted-foreground">Nearby</span>
+          <div className="container mx-auto px-4 py-4 flex items-center gap-4">
+            <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <h1 className="text-2xl font-bold">Discover People</h1>
+            <div className="flex items-center gap-2 ml-auto">
+              {locationEnabled ? (
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  <span className="text-sm text-primary">Location Active</span>
+                </div>
+              ) : (
+                <Button variant="outline" size="sm" onClick={enableLocation}>
+                  <Navigation className="h-4 w-4 mr-2" />
+                  Enable Location
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-md">
@@ -219,7 +157,14 @@ const Discovery = () => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
             <p className="mt-4 text-muted-foreground">Finding people with shared interests...</p>
           </div>
-        ) : currentUserIndex >= nearbyUsers.length ? (
+        ) : error ? (
+          <div className="text-center py-16">
+            <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
+            <h2 className="text-2xl font-bold mb-4">Error Loading Matches</h2>
+            <p className="text-muted-foreground mb-6">{error}</p>
+            <Button onClick={() => findMatches()}>Try Again</Button>
+          </div>
+        ) : currentUserIndex >= matches.length ? (
           <div className="text-center py-16">
             <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
             <h2 className="text-2xl font-bold mb-4">No More People Nearby</h2>
@@ -234,7 +179,7 @@ const Discovery = () => {
           <div className="space-y-6">
             <div className="text-center">
               <p className="text-sm text-muted-foreground">
-                {currentUserIndex + 1} of {nearbyUsers.length}
+                {currentUserIndex + 1} of {matches.length}
               </p>
             </div>
 
@@ -242,36 +187,46 @@ const Discovery = () => {
               <CardContent className="p-6">
                 <div className="text-center mb-6">
                   <Avatar className="h-24 w-24 mx-auto mb-4">
+                    {matches[currentUserIndex]?.avatar_url && (
+                      <AvatarImage src={matches[currentUserIndex].avatar_url} />
+                    )}
                     <AvatarFallback className="text-2xl">
-                      {nearbyUsers[currentUserIndex]?.display_name.charAt(0).toUpperCase()}
+                      {matches[currentUserIndex]?.display_name.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <h2 className="text-2xl font-bold">
-                    {nearbyUsers[currentUserIndex]?.display_name}
+                    {matches[currentUserIndex]?.display_name}
                   </h2>
                   <p className="text-muted-foreground">
-                    @{nearbyUsers[currentUserIndex]?.username}
+                    @{matches[currentUserIndex]?.username}
                   </p>
+                  {matches[currentUserIndex]?.distance_km && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      <MapPin className="inline h-3 w-3 mr-1" />
+                      {Math.round(matches[currentUserIndex].distance_km!)} km away
+                    </p>
+                  )}
                 </div>
 
-                {nearbyUsers[currentUserIndex]?.bio && (
+                {matches[currentUserIndex]?.bio && (
                   <div className="mb-6">
                     <p className="text-sm text-muted-foreground">
-                      {nearbyUsers[currentUserIndex].bio}
+                      {matches[currentUserIndex].bio}
                     </p>
                   </div>
                 )}
 
                 <div className="mb-8">
-                  <h3 className="font-semibold mb-3">
-                    Shared Interests ({nearbyUsers[currentUserIndex]?.shared_interests.length})
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {nearbyUsers[currentUserIndex]?.shared_interests.map((interest, index) => (
-                      <Badge key={index} variant="secondary">
-                        {interest.icon} {interest.name}
-                      </Badge>
-                    ))}
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-semibold">
+                      Shared Interests ({matches[currentUserIndex]?.shared_interests_count})
+                    </h3>
+                    <div className="text-sm text-muted-foreground">
+                      Match: {Math.round(matches[currentUserIndex]?.compatibility_score || 0)}%
+                    </div>
+                  </div>
+                  <div className="text-sm text-muted-foreground mb-2">
+                    Based on your common interests and location
                   </div>
                 </div>
 
