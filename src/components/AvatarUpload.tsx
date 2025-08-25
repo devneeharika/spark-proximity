@@ -127,6 +127,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const backgroundRemovalInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,13 +155,38 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
     await uploadAvatar(file);
   };
 
-  const uploadAvatar = async (file: File, removeBackground = false) => {
+  const handleFileSelectWithBackgroundRemoval = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select an image file.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please select an image smaller than 5MB.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    await uploadAvatar(file, true);
+  };
+
+  const uploadAvatar = async (file: File, shouldRemoveBackground = false) => {
     try {
       setIsUploading(true);
       
       let finalFile = file;
       
-      if (removeBackground) {
+      if (shouldRemoveBackground) {
         setIsProcessing(true);
         toast({
           title: "Processing image",
@@ -255,7 +281,7 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
         <Button
           variant="secondary"
           size="sm"
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => backgroundRemovalInputRef.current?.click()}
           disabled={isUploading || isProcessing}
           className="gap-2"
         >
@@ -269,6 +295,14 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
         type="file"
         accept="image/*"
         onChange={handleFileSelect}
+        className="hidden"
+      />
+      
+      <input
+        ref={backgroundRemovalInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileSelectWithBackgroundRemoval}
         className="hidden"
       />
       
