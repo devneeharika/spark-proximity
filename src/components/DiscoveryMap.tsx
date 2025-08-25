@@ -26,7 +26,12 @@ const DiscoveryMap = ({ userLocation, matches = [], className }: DiscoveryMapPro
 
     // Clean up existing map
     if (map.current) {
-      map.current.remove();
+      try {
+        map.current.remove();
+      } catch (error) {
+        console.warn('Error removing existing map:', error);
+      }
+      map.current = null;
     }
 
     try {
@@ -160,7 +165,14 @@ const DiscoveryMap = ({ userLocation, matches = [], className }: DiscoveryMapPro
     initializeMap(publicToken);
 
     return () => {
-      map.current?.remove();
+      if (map.current) {
+        try {
+          map.current.remove();
+        } catch (error) {
+          console.warn('Error cleaning up map:', error);
+        }
+        map.current = null;
+      }
     };
   }, [userLocation]); // Re-initialize when userLocation changes
 
