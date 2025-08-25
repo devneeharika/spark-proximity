@@ -37,7 +37,7 @@ function resizeImageIfNeeded(canvas: HTMLCanvasElement, ctx: CanvasRenderingCont
   return false;
 }
 
-const removeBackground = async (imageElement: HTMLImageElement): Promise<Blob> => {
+const processImageBackground = async (imageElement: HTMLImageElement): Promise<Blob> => {
   try {
     console.log('Starting background removal process...');
     const segmenter = await pipeline('image-segmentation', 'Xenova/segformer-b0-finetuned-ade-512-512', {
@@ -104,7 +104,7 @@ const removeBackground = async (imageElement: HTMLImageElement): Promise<Blob> =
   }
 };
 
-const loadImage = (file: Blob): Promise<HTMLImageElement> => {
+const loadImageFromFile = (file: Blob): Promise<HTMLImageElement> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(img);
@@ -130,17 +130,14 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
   const backgroundRemovalInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
+  const validateFile = (file: File) => {
     if (!file.type.startsWith('image/')) {
       toast({
         title: "Invalid file type",
         description: "Please select an image file.",
         variant: "destructive",
       });
-      return;
+      return false;
     }
 
     if (file.size > 5 * 1024 * 1024) {
@@ -149,55 +146,49 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
         description: "Please select an image smaller than 5MB.",
         variant: "destructive",
       });
-      return;
+      return false;
     }
 
-    await uploadAvatar(file);
+    return true;
   };
 
-  const handleFileSelectWithBackgroundRemoval = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const uploadToStorage = async (file: File) => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${userId}/${Date.now()}.${fileExt}`;
 
-    if (!file.type.startsWith('image/')) {
-      toast({
-        title: "Invalid file type",
-        description: "Please select an image file.",
-        variant: "destructive",
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: true,
       });
-      return;
-    }
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Please select an image smaller than 5MB.",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (uploadError) throw uploadError;
 
-    await uploadAvatar(file, true);
+    const { data: { publicUrl } } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(fileName);
+
+    return publicUrl;
   };
 
-  const uploadAvatar = async (file: File, shouldRemoveBackground = false) => {
+  const processAndUpload = async (file: File, shouldRemoveBackground: boolean) => {
     try {
       setIsUploading(true);
-      
       let finalFile = file;
-      
+
       if (shouldRemoveBackground) {
         setIsProcessing(true);
         toast({
           title: "Processing image",
           description: "Removing background... This may take a moment.",
         });
-        
+
         try {
-          const img = await loadImage(file);
-          const processedBlob = await removeBackground(img);
+          const img = await loadImageFromFile(file);
+          const processedBlob = await processImageBackground(img);
           finalFile = new File([processedBlob], `avatar-${userId}.png`, { type: 'image/png' });
-          
+
           toast({
             title: "Background removed",
             description: "Image processed successfully!",
@@ -214,24 +205,9 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
         }
       }
 
-      const fileExt = finalFile.name.split('.').pop();
-      const fileName = `${userId}/${Date.now()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(fileName, finalFile, {
-          cacheControl: '3600',
-          upsert: true,
-        });
-
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
-        .getPublicUrl(fileName);
-
+      const publicUrl = await uploadToStorage(finalFile);
       onAvatarChange(publicUrl);
-      
+
       toast({
         title: "Avatar updated",
         description: "Your profile picture has been updated successfully.",
@@ -247,6 +223,18 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
       setIsUploading(false);
       setIsProcessing(false);
     }
+  };
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !validateFile(file)) return;
+    await processAndUpload(file, false);
+  };
+
+  const handleFileSelectWithBackground = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !validateFile(file)) return;
+    await processAndUpload(file, true);
   };
 
   return (
@@ -296,14 +284,16 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
         accept="image/*"
         onChange={handleFileSelect}
         className="hidden"
+        key="upload"
       />
       
       <input
         ref={backgroundRemovalInputRef}
         type="file"
         accept="image/*"
-        onChange={handleFileSelectWithBackgroundRemoval}
+        onChange={handleFileSelectWithBackground}
         className="hidden"
+        key="background"
       />
       
       <p className="text-sm text-muted-foreground text-center max-w-xs">
