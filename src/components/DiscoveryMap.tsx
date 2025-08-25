@@ -19,6 +19,8 @@ const DiscoveryMap = ({ userLocation, matches = [], className }: DiscoveryMapPro
   const [showTokenInput, setShowTokenInput] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
+  console.log('DiscoveryMap render - userLocation:', userLocation, 'matches:', matches.length);
+
   const initializeMap = (token: string) => {
     if (!mapContainer.current || !token) return;
 
@@ -35,7 +37,7 @@ const DiscoveryMap = ({ userLocation, matches = [], className }: DiscoveryMapPro
         ? [userLocation.longitude, userLocation.latitude]
         : [-122.4194, 37.7749];
 
-      console.log('Initializing map with center:', center, 'userLocation:', userLocation);
+      console.log('🗺️ Initializing map with center:', center, 'userLocation:', userLocation);
 
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
@@ -53,73 +55,91 @@ const DiscoveryMap = ({ userLocation, matches = [], className }: DiscoveryMapPro
         'top-right'
       );
 
-      // Add user location marker if available
-      if (userLocation) {
-        console.log('Adding user location marker at:', userLocation);
-        new mapboxgl.Marker({ color: '#8b5cf6' })
-          .setLngLat([userLocation.longitude, userLocation.latitude])
-          .setPopup(new mapboxgl.Popup().setHTML('<p><strong>Your Location</strong><br/>Foster City, CA</p>'))
-          .addTo(map.current);
-
-        // Add radius circle for discovery area
-        map.current.on('load', () => {
-          if (!map.current || !userLocation) return;
-
-          map.current.addSource('discovery-radius', {
-            type: 'geojson',
-            data: {
-              type: 'Feature',
-              geometry: {
-                type: 'Point',
-                coordinates: [userLocation.longitude, userLocation.latitude]
-              },
-              properties: {}
-            }
-          });
-
-          map.current.addLayer({
-            id: 'discovery-radius',
-            type: 'circle',
-            source: 'discovery-radius',
-            paint: {
-              'circle-radius': {
-                stops: [
-                  [0, 0],
-                  [20, 500]
-                ],
-                base: 2
-              },
-              'circle-color': '#8b5cf6',
-              'circle-opacity': 0.1,
-              'circle-stroke-color': '#8b5cf6',
-              'circle-stroke-width': 2,
-              'circle-stroke-opacity': 0.3
-            }
-          });
-        });
-      }
-
-      // Add markers for potential matches
-      matches.forEach((match, index) => {
-        if (match.latitude && match.longitude) {
-          new mapboxgl.Marker({ color: '#22c55e' })
-            .setLngLat([match.longitude, match.latitude])
-            .setPopup(
-              new mapboxgl.Popup().setHTML(`
-                <div>
-                  <strong>${match.display_name}</strong>
-                  <p>${match.shared_interests_count} shared interests</p>
-                </div>
-              `)
-            )
-            .addTo(map.current);
-        }
+      // Wait for map to load before adding markers
+      map.current.on('load', () => {
+        addUserLocationMarker();
+        addMatchMarkers();
       });
 
       setInitialized(true);
     } catch (error) {
       console.error('Error initializing map:', error);
     }
+  };
+
+  const addUserLocationMarker = () => {
+    if (!map.current || !userLocation) {
+      console.log('🏠 Cannot add user marker - map:', !!map.current, 'userLocation:', !!userLocation);
+      return;
+    }
+
+    console.log('🏠 Adding user location marker at:', userLocation);
+    
+    // Add user location marker
+    new mapboxgl.Marker({ color: '#8b5cf6' })
+      .setLngLat([userLocation.longitude, userLocation.latitude])
+      .setPopup(new mapboxgl.Popup().setHTML('<p><strong>Your Location</strong><br/>Foster City, CA</p>'))
+      .addTo(map.current);
+
+    // Add radius circle for discovery area
+    if (map.current.getSource('discovery-radius')) {
+      map.current.removeLayer('discovery-radius');
+      map.current.removeSource('discovery-radius');
+    }
+
+    map.current.addSource('discovery-radius', {
+      type: 'geojson',
+      data: {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [userLocation.longitude, userLocation.latitude]
+        },
+        properties: {}
+      }
+    });
+
+    map.current.addLayer({
+      id: 'discovery-radius',
+      type: 'circle',
+      source: 'discovery-radius',
+      paint: {
+        'circle-radius': {
+          stops: [
+            [0, 0],
+            [20, 500]
+          ],
+          base: 2
+        },
+        'circle-color': '#8b5cf6',
+        'circle-opacity': 0.1,
+        'circle-stroke-color': '#8b5cf6',
+        'circle-stroke-width': 2,
+        'circle-stroke-opacity': 0.3
+      }
+    });
+  };
+
+  const addMatchMarkers = () => {
+    if (!map.current) return;
+
+    // Add markers for potential matches
+    matches.forEach((match, index) => {
+      if (match.latitude && match.longitude) {
+        console.log('👥 Adding match marker for:', match.display_name, 'at:', match.latitude, match.longitude);
+        new mapboxgl.Marker({ color: '#22c55e' })
+          .setLngLat([match.longitude, match.latitude])
+          .setPopup(
+            new mapboxgl.Popup().setHTML(`
+              <div>
+                <strong>${match.display_name}</strong>
+                <p>${match.shared_interests_count} shared interests</p>
+              </div>
+            `)
+          )
+          .addTo(map.current);
+      }
+    });
   };
 
   const handleTokenSubmit = () => {
@@ -131,6 +151,7 @@ const DiscoveryMap = ({ userLocation, matches = [], className }: DiscoveryMapPro
   };
 
   useEffect(() => {
+    console.log('DiscoveryMap useEffect - userLocation:', userLocation);
     // Use the provided public token directly
     const publicToken = 'pk.eyJ1IjoibmVlaGFyaWthdmFuZ2F2YXJhZ3UiLCJhIjoiY21lcWwyYTV5MGNqMzJrcHVla2MzOGExdCJ9.-7KDyeW2oTl4b09PgTmIOQ';
     setMapboxToken(publicToken);
