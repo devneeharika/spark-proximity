@@ -1,4 +1,5 @@
 import { useAuth } from '@/hooks/useAuth';
+import { useProfile } from '@/hooks/useProfile';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -7,6 +8,7 @@ import { Loader2, User, MapPin, Users, MessageCircle } from 'lucide-react';
 
 const Index = () => {
   const { user, loading, signOut } = useAuth();
+  const { profile } = useProfile();
 
   if (loading) {
     return (
@@ -82,15 +84,20 @@ const Index = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  Setup Profile
+                  {profile ? 'Edit Profile' : 'Setup Profile'}
                 </CardTitle>
                 <CardDescription>
-                  Complete your profile and add interests
+                  {profile 
+                    ? 'Update your profile information and interests'
+                    : 'Complete your profile and add interests'
+                  }
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Button asChild className="w-full">
-                  <Link to="/profile-setup">Get Started</Link>
+                  <Link to="/profile-setup">
+                    {profile ? 'Edit Profile' : 'Get Started'}
+                  </Link>
                 </Button>
               </CardContent>
             </Card>

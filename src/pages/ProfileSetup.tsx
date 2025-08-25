@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Check, Plus } from 'lucide-react';
+import { ArrowLeft, Check, Plus, X } from 'lucide-react';
 
 const ProfileSetup = () => {
   const navigate = useNavigate();
@@ -69,7 +69,9 @@ const ProfileSetup = () => {
           <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <h1 className="text-2xl font-bold">Setup Your Profile</h1>
+          <h1 className="text-2xl font-bold">
+            {profile ? 'Edit Your Profile' : 'Setup Your Profile'}
+          </h1>
         </div>
       </header>
 
@@ -83,10 +85,20 @@ const ProfileSetup = () => {
           <TabsContent value="basic">
             <Card>
               <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
+                <CardTitle>
+                  {profile ? 'Update Your Information' : 'Basic Information'}
+                </CardTitle>
                 <CardDescription>
-                  Tell others about yourself to make better connections
+                  {profile 
+                    ? 'Update your profile information and make changes as needed'
+                    : 'Tell others about yourself to make better connections'
+                  }
                 </CardDescription>
+                {profile && (
+                  <div className="text-sm text-muted-foreground">
+                    <p>Profile created: {new Date(profile.created_at).toLocaleDateString()}</p>
+                  </div>
+                )}
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -124,7 +136,7 @@ const ProfileSetup = () => {
                 </div>
                 
                 <Button onClick={handleSaveProfile} className="w-full">
-                  Save Profile
+                  {profile ? 'Update Profile' : 'Save Profile'}
                 </Button>
               </CardContent>
             </Card>
@@ -132,18 +144,45 @@ const ProfileSetup = () => {
 
           <TabsContent value="interests">
             <Card>
-              <CardHeader>
-                <CardTitle>Your Interests</CardTitle>
-                <CardDescription>
-                  Select interests to help us find people with similar passions nearby
-                </CardDescription>
-              </CardHeader>
+               <CardHeader>
+                 <CardTitle>Your Interests ({userInterests.length} selected)</CardTitle>
+                 <CardDescription>
+                   {userInterests.length > 0 
+                     ? 'Click on selected interests (blue) to remove them, or choose new ones below'
+                     : 'Select interests to help us find people with similar passions nearby'
+                   }
+                 </CardDescription>
+                 
+                 {/* Show current interests */}
+                 {userInterests.length > 0 && (
+                   <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                     <h4 className="text-sm font-medium mb-2">Your Current Interests:</h4>
+                     <div className="flex flex-wrap gap-2">
+                       {userInterests.map((userInterest) => (
+                         <Badge 
+                           key={userInterest.id} 
+                           variant="default"
+                           className="cursor-pointer hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                           onClick={() => toggleInterest(userInterest.interest_id)}
+                         >
+                           {userInterest.interest.icon} {userInterest.interest.name}
+                           <X className="h-3 w-3 ml-1" />
+                         </Badge>
+                       ))}
+                     </div>
+                     <p className="text-xs text-muted-foreground mt-2">Click to remove</p>
+                   </div>
+                 )}
+               </CardHeader>
               <CardContent>
                 {interestsLoading ? (
                   <div className="text-center py-8">Loading interests...</div>
                 ) : (
-                  <div className="space-y-6">
-                    {Object.entries(interestsByCategory).map(([category, interests]) => (
+                   <div className="space-y-6">
+                     <div className="text-sm font-medium text-foreground">
+                       {userInterests.length > 0 ? 'Add More Interests:' : 'Choose Your Interests:'}
+                     </div>
+                     {Object.entries(interestsByCategory).map(([category, interests]) => (
                       <div key={category}>
                         <h3 className="text-lg font-semibold mb-3 text-foreground">
                           {category}
