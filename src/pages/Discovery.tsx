@@ -169,11 +169,22 @@ const Discovery = () => {
             <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
             <h2 className="text-2xl font-bold mb-4">No More People Nearby</h2>
             <p className="text-muted-foreground mb-6">
-              You've seen everyone with shared interests in your area. Check back later for new people!
+              {matches.length === 0 
+                ? "You're the first user! Invite friends to join and start discovering people with shared interests."
+                : "You've seen everyone with shared interests in your area. Check back later for new people!"
+              }
             </p>
-            <Button onClick={() => navigate('/')}>
-              Go Home
-            </Button>
+            <div className="space-y-3">
+              <Button onClick={() => navigate('/')}>
+                Go Home
+              </Button>
+              {matches.length === 0 && (
+                <div className="text-sm text-muted-foreground">
+                  <p>Your interests: Music Production 🎵, Tech 💻</p>
+                  <p className="mt-2">When others join with similar interests, they'll appear here!</p>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <div className="space-y-6">
