@@ -176,161 +176,160 @@ const Discovery = () => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex flex-col h-screen">
-        {/* Map Section - Takes up top 60% */}
-        <div className="flex-1 relative overflow-hidden">
-          <DiscoveryMap 
-            userLocation={location} 
-            matches={matches.slice(0, 10)}
-          />
-          
-          {/* Location prompt overlay */}
-          {!location && (
-            <div className="absolute bottom-4 left-4 right-4">
-              <Card className="bg-card/90 backdrop-blur-xl border-0">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <MapPin className="w-5 h-5 text-primary" />
-                    <div className="flex-1">
-                      <p className="font-medium">Enable location to see people nearby</p>
-                      <p className="text-sm text-muted-foreground">Find connections around you</p>
-                    </div>
-                    <Button onClick={enableLocation} size="sm" className="bg-gradient-social text-white">
-                      Enable
-                    </Button>
+      {/* Full Screen Map */}
+      <div className="absolute inset-0 pt-20 pb-20">
+        <DiscoveryMap 
+          userLocation={location} 
+          matches={matches.slice(0, 10)}
+        />
+        
+        {/* Location prompt overlay */}
+        {!location && (
+          <div className="absolute bottom-24 left-4 right-4">
+            <Card className="bg-card/90 backdrop-blur-xl border-0">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  <div className="flex-1">
+                    <p className="font-medium">Enable location to see people nearby</p>
+                    <p className="text-sm text-muted-foreground">Find connections around you</p>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-        </div>
-
-        {/* Cards Section - Takes up bottom 40% */}
-        <div className="h-[40vh] bg-background/95 backdrop-blur-xl">
-          {loading && (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-muted-foreground">Finding people nearby...</p>
-              </div>
-            </div>
-          )}
-
-          {error && (
-            <div className="flex items-center justify-center h-full">
-              <Card className="w-full max-w-sm mx-4">
-                <CardContent className="p-6 text-center">
-                  <X className="w-8 h-8 text-destructive mx-auto mb-4" />
-                  <p className="font-medium mb-2">Something went wrong</p>
-                  <p className="text-sm text-muted-foreground">Failed to load matches</p>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
-          {!loading && !error && matches.length === 0 && (
-            <div className="flex items-center justify-center h-full">
-              <Card className="w-full max-w-sm mx-4">
-                <CardContent className="p-6 text-center">
-                  <Users className="w-8 h-8 text-muted-foreground mx-auto mb-4" />
-                  <p className="font-medium mb-2">No matches found</p>
-                  <p className="text-sm text-muted-foreground">
-                    Try expanding your search or adding more interests
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-
-          {!loading && !error && currentUserIndex >= matches.length && matches.length > 0 && (
-            <div className="flex items-center justify-center h-full">
-              <Card className="w-full max-w-sm mx-4">
-                <CardContent className="p-6 text-center">
-                  <Heart className="w-8 h-8 text-primary mx-auto mb-4" />
-                  <p className="font-medium mb-2">You've seen everyone!</p>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Check back later for new people
-                  </p>
-                  <Button onClick={() => setCurrentUserIndex(0)} className="bg-gradient-social text-white">
-                    Start Over
+                  <Button onClick={enableLocation} size="sm" className="bg-gradient-social text-white">
+                    Enable
                   </Button>
-                </CardContent>
-              </Card>
-            </div>
-          )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
-          {!loading && !error && currentUser && (
-            <div className="p-4 h-full">
-              <Card className="h-full bg-card/50 backdrop-blur-xl border-0 shadow-xl overflow-hidden">
-                <CardContent className="p-0 h-full flex flex-col">
-                  <div className="flex-1 p-6">
-                    {/* User Info */}
-                    <div className="flex items-center gap-4 mb-6">
-                      <Avatar className="w-16 h-16 border-2 border-primary">
-                        <AvatarImage src={currentUser.avatar_url} />
-                        <AvatarFallback className="bg-gradient-social text-white font-semibold">
-                          {currentUser.display_name?.[0]?.toUpperCase() || 'U'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold">{currentUser.display_name}</h3>
-                        <p className="text-muted-foreground">@{currentUser.username}</p>
-                        {currentUser.distance_km && (
-                          <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+        {/* Floating User Card */}
+        {!loading && !error && currentUser && (
+          <div className="absolute bottom-24 left-4 right-4">
+            <Card className="bg-card/95 backdrop-blur-xl border-0 shadow-2xl">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3 mb-4">
+                  <Avatar className="w-12 h-12 border-2 border-primary">
+                    <AvatarImage src={currentUser.avatar_url} />
+                    <AvatarFallback className="bg-gradient-social text-white font-semibold">
+                      {currentUser.display_name?.[0]?.toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-lg truncate">{currentUser.display_name}</h3>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span>@{currentUser.username}</span>
+                      {currentUser.distance_km && (
+                        <>
+                          <span>•</span>
+                          <div className="flex items-center gap-1">
                             <MapPin className="w-3 h-3" />
                             {currentUser.distance_km < 1 
-                              ? "Less than 1km away"
+                              ? "< 1km away"
                               : `${Math.round(currentUser.distance_km)}km away`
                             }
                           </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Bio */}
-                    {currentUser.bio && (
-                      <div className="mb-4">
-                        <p className="text-foreground leading-relaxed">{currentUser.bio}</p>
-                      </div>
-                    )}
-
-                    {/* Shared Interests */}
-                    <div className="mb-6">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Heart className="w-4 h-4 text-primary" />
-                        <span className="font-medium text-sm">
-                          {currentUser.shared_interests_count} shared interests
-                        </span>
-                      </div>
+                        </>
+                      )}
                     </div>
                   </div>
+                </div>
 
-                  {/* Action Buttons */}
-                  <div className="p-6 pt-0">
-                    <div className="flex gap-4">
-                      <Button
-                        onClick={nextUser}
-                        variant="outline"
-                        className="flex-1 h-12 border-border/50"
-                      >
-                        <X className="w-5 h-5 mr-2" />
-                        Pass
-                      </Button>
-                      <Button
-                        onClick={handleConnect}
-                        className="flex-1 h-12 bg-gradient-social text-white font-medium shadow-glow"
-                      >
-                        <Heart className="w-5 h-5 mr-2" />
-                        Connect
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-        </div>
+                {/* Bio */}
+                {currentUser.bio && (
+                  <p className="text-sm text-foreground mb-3 line-clamp-2">{currentUser.bio}</p>
+                )}
+
+                {/* Shared Interests */}
+                <div className="flex items-center gap-2 mb-4">
+                  <Heart className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium">
+                    {currentUser.shared_interests_count} shared interests
+                  </span>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3">
+                  <Button
+                    onClick={nextUser}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 h-10"
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Pass
+                  </Button>
+                  <Button
+                    onClick={handleConnect}
+                    size="sm"
+                    className="flex-1 h-10 bg-gradient-social text-white font-medium shadow-glow"
+                  >
+                    <Heart className="w-4 h-4 mr-2" />
+                    Connect
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-background/20 backdrop-blur-sm">
+            <Card className="bg-card/90 backdrop-blur-xl border-0">
+              <CardContent className="p-6 text-center">
+                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Finding people nearby...</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="absolute bottom-24 left-4 right-4">
+            <Card className="bg-card/90 backdrop-blur-xl border-0">
+              <CardContent className="p-6 text-center">
+                <X className="w-8 h-8 text-destructive mx-auto mb-4" />
+                <p className="font-medium mb-2">Something went wrong</p>
+                <p className="text-sm text-muted-foreground">Failed to load matches</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* No matches */}
+        {!loading && !error && matches.length === 0 && (
+          <div className="absolute bottom-24 left-4 right-4">
+            <Card className="bg-card/90 backdrop-blur-xl border-0">
+              <CardContent className="p-6 text-center">
+                <Users className="w-8 h-8 text-muted-foreground mx-auto mb-4" />
+                <p className="font-medium mb-2">No matches found</p>
+                <p className="text-sm text-muted-foreground">
+                  Try expanding your search or adding more interests
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* All matches seen */}
+        {!loading && !error && currentUserIndex >= matches.length && matches.length > 0 && (
+          <div className="absolute bottom-24 left-4 right-4">
+            <Card className="bg-card/90 backdrop-blur-xl border-0">
+              <CardContent className="p-6 text-center">
+                <Heart className="w-8 h-8 text-primary mx-auto mb-4" />
+                <p className="font-medium mb-2">You've seen everyone!</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Check back later for new people
+                </p>
+                <Button onClick={() => setCurrentUserIndex(0)} className="bg-gradient-social text-white">
+                  Start Over
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
 
       {/* Bottom Navigation */}
