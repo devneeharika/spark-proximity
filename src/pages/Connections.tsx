@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, Check, X, Clock, Users } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import BottomNavigation from '@/components/BottomNavigation';
 
 interface Connection {
   id: string;
@@ -168,19 +169,16 @@ const Connections = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <h1 className="text-2xl font-bold">Your Connections</h1>
+    <div className="min-h-screen bg-gradient-bg pb-20">
+      <header className="p-6 pt-12">
+        <div className="flex items-center gap-4 mb-6">
+          <h1 className="text-2xl font-bold">Connections</h1>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-2xl">
+      <main className="px-4 max-w-2xl mx-auto">
         <Tabs defaultValue="accepted" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-3 glass">
             <TabsTrigger value="accepted">
               Connections ({acceptedConnections.length})
             </TabsTrigger>
@@ -384,6 +382,8 @@ const Connections = () => {
           </TabsContent>
         </Tabs>
       </main>
+      
+      <BottomNavigation />
     </div>
   );
 };

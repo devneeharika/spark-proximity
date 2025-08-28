@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, MessageCircle } from 'lucide-react';
 import { format, isToday, isYesterday } from 'date-fns';
+import BottomNavigation from '@/components/BottomNavigation';
 
 const Messages = () => {
   const navigate = useNavigate();
@@ -53,39 +54,40 @@ const Messages = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
+    <div className="min-h-screen bg-gradient-bg pb-20">
+      <header className="p-6 pt-12">
+        <div className="flex items-center gap-4 mb-6">
           <h1 className="text-2xl font-bold">Messages</h1>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-2xl">
+      <main className="px-4 max-w-2xl mx-auto">
         {loading ? (
           <div className="text-center py-16">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Loading conversations...</p>
+            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading conversations...</p>
           </div>
         ) : conversations.length === 0 ? (
           <div className="text-center py-16">
-            <MessageCircle className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-2xl font-bold mb-4">No Messages Yet</h2>
-            <p className="text-muted-foreground mb-6">
-              Start connecting with people to begin conversations!
-            </p>
-            <Button onClick={() => navigate('/discovery')}>
-              Discover People
-            </Button>
+            <Card className="glass">
+              <CardContent className="p-8">
+                <MessageCircle className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                <h2 className="text-xl font-bold mb-4">No Messages Yet</h2>
+                <p className="text-muted-foreground mb-6">
+                  Start connecting with people to begin conversations!
+                </p>
+                <Button onClick={() => navigate('/')} className="bg-gradient-social text-white">
+                  Discover People
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-3">
             {conversations.map((conversation) => (
               <Card 
                 key={conversation.user_id}
-                className="cursor-pointer hover:bg-muted/50 transition-colors"
+                className="glass hover-lift cursor-pointer"
                 onClick={() => setSelectedConversation({
                   userId: conversation.user_id,
                   name: conversation.display_name,
@@ -95,11 +97,11 @@ const Messages = () => {
               >
                 <CardContent className="p-4">
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-12 w-12">
+                    <Avatar className="w-12 h-12 border-2 border-primary">
                       {conversation.avatar_url && (
                         <AvatarImage src={conversation.avatar_url} />
                       )}
-                      <AvatarFallback>
+                      <AvatarFallback className="bg-gradient-social text-white">
                         {conversation.display_name.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -111,7 +113,7 @@ const Messages = () => {
                         </h3>
                         <div className="flex items-center gap-2">
                           {conversation.unread_count > 0 && (
-                            <Badge variant="default" className="h-5 w-5 p-0 text-xs flex items-center justify-center">
+                            <Badge className="bg-gradient-social text-white border-0">
                               {conversation.unread_count}
                             </Badge>
                           )}
@@ -132,6 +134,8 @@ const Messages = () => {
           </div>
         )}
       </main>
+      
+      <BottomNavigation />
     </div>
   );
 };

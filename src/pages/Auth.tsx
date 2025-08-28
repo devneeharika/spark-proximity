@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, MapPin, Users, MessageCircle, Zap } from 'lucide-react';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -72,8 +72,8 @@ const Auth = () => {
         });
       } else {
         toast({
-          title: "Account Created",
-          description: "Please check your email to verify your account."
+          title: "Welcome to Spark! ✨",
+          description: "Your account has been created. Let's get started!"
         });
       }
     } catch (error) {
@@ -88,129 +88,186 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Welcome to PingMe</CardTitle>
-          <CardDescription>Connect with people who share your interests</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
+    <div className="min-h-screen bg-gradient-bg flex items-center justify-center px-4 py-8">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-4 -right-4 w-72 h-72 bg-gradient-social rounded-full blur-3xl opacity-20 animate-float"></div>
+        <div className="absolute -bottom-4 -left-4 w-96 h-96 bg-gradient-social rounded-full blur-3xl opacity-10 animate-float" style={{animationDelay: '1.5s'}}></div>
+      </div>
+      
+      <div className="w-full max-w-md relative z-10">
+        {/* Logo and Hero Section */}
+        <div className="text-center mb-8 animate-fade-in">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-social rounded-2xl mb-6 shadow-glow">
+            <Zap className="w-10 h-10 text-white" />
+          </div>
+          <h1 className="text-4xl font-bold bg-gradient-social bg-clip-text text-transparent mb-2">
+            Spark
+          </h1>
+          <p className="text-muted-foreground text-lg">
+            Connect with people around you
+          </p>
+        </div>
+
+        {/* Features Preview */}
+        <div className="grid grid-cols-3 gap-4 mb-8 animate-fade-in" style={{animationDelay: '0.2s'}}>
+          <div className="text-center p-4 rounded-xl bg-card/50 backdrop-blur-sm border">
+            <MapPin className="w-6 h-6 mx-auto mb-2 text-primary" />
+            <p className="text-sm text-muted-foreground">Discover Nearby</p>
+          </div>
+          <div className="text-center p-4 rounded-xl bg-card/50 backdrop-blur-sm border">
+            <Users className="w-6 h-6 mx-auto mb-2 text-primary" />
+            <p className="text-sm text-muted-foreground">Make Connections</p>
+          </div>
+          <div className="text-center p-4 rounded-xl bg-card/50 backdrop-blur-sm border">
+            <MessageCircle className="w-6 h-6 mx-auto mb-2 text-primary" />
+            <p className="text-sm text-muted-foreground">Start Chatting</p>
+          </div>
+        </div>
+
+        {/* Auth Form */}
+        <Card className="backdrop-blur-xl bg-card/80 shadow-2xl border-0 animate-scale-in" style={{animationDelay: '0.4s'}}>
+          <CardContent className="p-6">
+            <Tabs defaultValue="signin" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6 bg-secondary/50">
+                <TabsTrigger value="signin" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+                  Sign In
+                </TabsTrigger>
+                <TabsTrigger value="signup" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+                  Sign Up
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="signin">
+                <form onSubmit={handleSignIn} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isLoading}
+                      className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                    <Input
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder="Enter your password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isLoading}
+                      className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 bg-gradient-social hover:shadow-glow transition-all duration-300 text-white font-medium" 
                     disabled={isLoading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Signing In...
+                      </>
+                    ) : (
+                      'Sign In'
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+              
+              <TabsContent value="signup">
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email" className="text-sm font-medium">Email</Label>
+                    <Input
+                      id="signup-email"
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isLoading}
+                      className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="text-sm font-medium">Username</Label>
+                    <Input
+                      id="username"
+                      name="username"
+                      type="text"
+                      placeholder="Choose a username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isLoading}
+                      className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="displayName" className="text-sm font-medium">Display Name</Label>
+                    <Input
+                      id="displayName"
+                      name="displayName"
+                      type="text"
+                      placeholder="Your display name"
+                      value={formData.displayName}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isLoading}
+                      className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password" className="text-sm font-medium">Password</Label>
+                    <Input
+                      id="signup-password"
+                      name="password"
+                      type="password"
+                      placeholder="Create a password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                      disabled={isLoading}
+                      className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
+                    />
+                  </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 bg-gradient-social hover:shadow-glow transition-all duration-300 text-white font-medium" 
                     disabled={isLoading}
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Signing In...
-                    </>
-                  ) : (
-                    'Sign In'
-                  )}
-                </Button>
-              </form>
-            </TabsContent>
-            
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    name="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="username">Username</Label>
-                  <Input
-                    id="username"
-                    name="username"
-                    type="text"
-                    placeholder="Choose a username"
-                    value={formData.username}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="displayName">Display Name</Label>
-                  <Input
-                    id="displayName"
-                    name="displayName"
-                    type="text"
-                    placeholder="Your display name"
-                    value={formData.displayName}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
-                  <Input
-                    id="signup-password"
-                    name="password"
-                    type="password"
-                    placeholder="Create a password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating Account...
-                    </>
-                  ) : (
-                    'Sign Up'
-                  )}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating Account...
+                      </>
+                    ) : (
+                      'Sign Up'
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+
+        {/* Footer */}
+        <p className="text-center text-sm text-muted-foreground mt-6 animate-fade-in" style={{animationDelay: '0.6s'}}>
+          By continuing, you agree to our Terms & Privacy Policy
+        </p>
+      </div>
     </div>
   );
 };

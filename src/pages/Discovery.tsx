@@ -6,14 +6,12 @@ import { useMatching } from '@/hooks/useMatching';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import DiscoveryMap from '@/components/DiscoveryMap';
-import { ArrowLeft, MapPin, Heart, X, Users, Navigation } from 'lucide-react';
+import { MapPin, Heart, X, Users, Navigation, Home, MessageCircle, User, Settings, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-// Remove the old interface as we'll use the PotentialMatch from useMatching hook
 
 const Discovery = () => {
   const navigate = useNavigate();
@@ -25,16 +23,22 @@ const Discovery = () => {
   const [currentUserIndex, setCurrentUserIndex] = useState(0);
   const [locationEnabled, setLocationEnabled] = useState(false);
 
+  // Redirect to auth if not logged in
+  useEffect(() => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+  }, [user, navigate]);
+
   useEffect(() => {
     if (user && userInterests.length > 0) {
       const fetchMatches = async () => {
         try {
           if (location) {
             setLocationEnabled(true);
-            // Use geolocation-based matching
             await findMatches({ maxDistance: 50, minSharedInterests: 1, limit: 20 });
           } else {
-            // Fallback to interests-only matching  
             await findMatches({ minSharedInterests: 1, limit: 20 });
           }
         } catch (error) {
@@ -48,54 +52,48 @@ const Discovery = () => {
 
   const enableLocation = async () => {
     try {
-      await requestLocationAndSave();
+      const position = await requestLocationAndSave();
       setLocationEnabled(true);
       toast({
-        title: "Location Enabled",
-        description: "Now showing people nearby with shared interests!"
+        title: "Location enabled! 📍",
+        description: "Now discovering people nearby..."
       });
+      
+      // Refresh matches with location
+      await findMatches({ maxDistance: 50, minSharedInterests: 1, limit: 20 });
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Location Error",
-        description: "Could not access location. Showing matches based on interests only."
+        title: "Location access denied",
+        description: "Enable location to discover people nearby"
       });
     }
   };
 
   const handleConnect = async () => {
-    if (!user || currentUserIndex >= matches.length) return;
+    if (!user || !matches[currentUserIndex]) return;
 
-    const targetUser = matches[currentUserIndex];
-    
     try {
       const { error } = await supabase
         .from('connections')
         .insert({
           requester_id: user.id,
-          receiver_id: targetUser.user_id,
+          receiver_id: matches[currentUserIndex].user_id,
           status: 'pending'
         });
 
-      if (error) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to send connection request"
-        });
-        return;
-      }
+      if (error) throw error;
 
       toast({
-        title: "Connection Sent",
-        description: `Connection request sent to ${targetUser.display_name}!`
+        title: "Connection sent! ✨",
+        description: `Sent a connection request to ${matches[currentUserIndex].display_name}`
       });
 
       nextUser();
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Connection failed",
         description: "Failed to send connection request"
       });
     }
@@ -105,187 +103,279 @@ const Discovery = () => {
     setCurrentUserIndex(prev => prev + 1);
   };
 
+  // Show auth prompt if not logged in
   if (!user) {
-    navigate('/auth');
-    return null;
+    return null; // Will redirect in useEffect
   }
 
+  // Show interests setup prompt
   if (userInterests.length === 0) {
     return (
-      <div className="min-h-screen bg-background">
-        <header className="border-b">
-          <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
-              <ArrowLeft className="h-4 w-4" />
+      <div className="min-h-screen bg-gradient-bg flex flex-col items-center justify-center px-4">
+        <Card className="w-full max-w-md text-center bg-card/80 backdrop-blur-xl border-0 shadow-2xl">
+          <CardContent className="p-8">
+            <div className="w-16 h-16 bg-gradient-social rounded-full flex items-center justify-center mx-auto mb-6">
+              <Users className="w-8 h-8 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold mb-4">Setup Your Interests</h2>
+            <p className="text-muted-foreground mb-6">
+              Add your interests to discover people who share your passions
+            </p>
+            <Button 
+              onClick={() => navigate('/profile-setup')}
+              className="w-full h-12 bg-gradient-social text-white font-medium"
+            >
+              Setup Interests
             </Button>
-            <h1 className="text-2xl font-bold">Discover People</h1>
-          </div>
-        </header>
-
-        <main className="container mx-auto px-4 py-16 text-center max-w-md">
-          <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-          <h2 className="text-2xl font-bold mb-4">Setup Your Interests First</h2>
-          <p className="text-muted-foreground mb-6">
-            Add some interests to your profile to discover people with similar passions nearby.
-          </p>
-          <Button onClick={() => navigate('/profile-setup')}>
-            Setup Profile
-          </Button>
-        </main>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
+  const currentUser = matches[currentUserIndex];
+
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-          <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <h1 className="text-2xl font-bold">Discover People</h1>
-            <div className="flex items-center gap-2 ml-auto">
-              {locationEnabled ? (
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  <span className="text-sm text-primary">Location Active</span>
-                </div>
-              ) : (
-                <Button variant="outline" size="sm" onClick={enableLocation}>
-                  <Navigation className="h-4 w-4 mr-2" />
-                  Enable Location
-                </Button>
-              )}
+    <div className="min-h-screen bg-gradient-bg relative">
+      {/* Header */}
+      <div className="absolute top-0 left-0 right-0 z-50 p-4 bg-gradient-to-b from-black/20 to-transparent">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-social rounded-xl flex items-center justify-center">
+              <Zap className="w-5 h-5 text-white" />
             </div>
-          </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Discovery Map */}
-        <div className="mb-8">
-          <DiscoveryMap 
-            userLocation={location} 
-            matches={matches}
-            className=""
-          />
-        </div>
-
-        {/* Matching Interface */}
-        <div className="max-w-md mx-auto">
-          {loading ? (
-          <div className="text-center py-16">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Finding people with shared interests...</p>
-          </div>
-        ) : error ? (
-          <div className="text-center py-16">
-            <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-2xl font-bold mb-4">Error Loading Matches</h2>
-            <p className="text-muted-foreground mb-6">{error}</p>
-            <Button onClick={() => findMatches()}>Try Again</Button>
-          </div>
-        ) : currentUserIndex >= matches.length ? (
-          <div className="text-center py-16">
-            <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-            <h2 className="text-2xl font-bold mb-4">No More People Nearby</h2>
-            <p className="text-muted-foreground mb-6">
-              {matches.length === 0 
-                ? "You're the first user! Invite friends to join and start discovering people with shared interests."
-                : "You've seen everyone with shared interests in your area. Check back later for new people!"
-              }
-            </p>
-            <div className="space-y-3">
-              <Button onClick={() => navigate('/')}>
-                Go Home
-              </Button>
-              {matches.length === 0 && (
-                <div className="text-sm text-muted-foreground">
-                  <p>Your interests: Music Production 🎵, Tech 💻</p>
-                  <p className="mt-2">When others join with similar interests, they'll appear here!</p>
-                </div>
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground">
-                {currentUserIndex + 1} of {matches.length}
+            <div>
+              <h1 className="text-xl font-bold text-white">Spark</h1>
+              <p className="text-xs text-white/70">
+                {matches.length - currentUserIndex} people nearby
               </p>
             </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            {!locationEnabled && (
+              <Button
+                onClick={enableLocation}
+                variant="secondary"
+                size="sm"
+                className="bg-white/20 text-white border-white/30 hover:bg-white/30"
+              >
+                <Navigation className="w-4 h-4 mr-2" />
+                Enable Location
+              </Button>
+            )}
+            <Button
+              onClick={() => navigate('/profile-setup')}
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20"
+            >
+              <Settings className="w-5 h-5" />
+            </Button>
+          </div>
+        </div>
+      </div>
 
-            <Card className="w-full">
-              <CardContent className="p-6">
-                <div className="text-center mb-6">
-                  <Avatar className="h-24 w-24 mx-auto mb-4">
-                    {matches[currentUserIndex]?.avatar_url && (
-                      <AvatarImage src={matches[currentUserIndex].avatar_url} />
-                    )}
-                    <AvatarFallback className="text-2xl">
-                      {matches[currentUserIndex]?.display_name.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <h2 className="text-2xl font-bold">
-                    {matches[currentUserIndex]?.display_name}
-                  </h2>
-                  <p className="text-muted-foreground">
-                    @{matches[currentUserIndex]?.username}
-                  </p>
-                  {matches[currentUserIndex]?.distance_km && (
-                    <p className="text-sm text-muted-foreground mt-1">
-                      <MapPin className="inline h-3 w-3 mr-1" />
-                      {Math.round(matches[currentUserIndex].distance_km!)} km away
-                    </p>
-                  )}
-                </div>
-
-                {matches[currentUserIndex]?.bio && (
-                  <div className="mb-6">
-                    <p className="text-sm text-muted-foreground">
-                      {matches[currentUserIndex].bio}
-                    </p>
+      {/* Main Content */}
+      <div className="flex flex-col h-screen">
+        {/* Map Section - Takes up top 60% */}
+        <div className="flex-1 relative overflow-hidden">
+          <DiscoveryMap 
+            userLocation={location} 
+            matches={matches.slice(0, 10)}
+          />
+          
+          {/* Location prompt overlay */}
+          {!location && (
+            <div className="absolute bottom-4 left-4 right-4">
+              <Card className="bg-card/90 backdrop-blur-xl border-0">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <MapPin className="w-5 h-5 text-primary" />
+                    <div className="flex-1">
+                      <p className="font-medium">Enable location to see people nearby</p>
+                      <p className="text-sm text-muted-foreground">Find connections around you</p>
+                    </div>
+                    <Button onClick={enableLocation} size="sm" className="bg-gradient-social text-white">
+                      Enable
+                    </Button>
                   </div>
-                )}
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </div>
 
-                <div className="mb-8">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold">
-                      Shared Interests ({matches[currentUserIndex]?.shared_interests_count})
-                    </h3>
-                    <div className="text-sm text-muted-foreground">
-                      Match: {Math.round(matches[currentUserIndex]?.compatibility_score || 0)}%
+        {/* Cards Section - Takes up bottom 40% */}
+        <div className="h-[40vh] bg-background/95 backdrop-blur-xl">
+          {loading && (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Finding people nearby...</p>
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="flex items-center justify-center h-full">
+              <Card className="w-full max-w-sm mx-4">
+                <CardContent className="p-6 text-center">
+                  <X className="w-8 h-8 text-destructive mx-auto mb-4" />
+                  <p className="font-medium mb-2">Something went wrong</p>
+                  <p className="text-sm text-muted-foreground">Failed to load matches</p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {!loading && !error && matches.length === 0 && (
+            <div className="flex items-center justify-center h-full">
+              <Card className="w-full max-w-sm mx-4">
+                <CardContent className="p-6 text-center">
+                  <Users className="w-8 h-8 text-muted-foreground mx-auto mb-4" />
+                  <p className="font-medium mb-2">No matches found</p>
+                  <p className="text-sm text-muted-foreground">
+                    Try expanding your search or adding more interests
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {!loading && !error && currentUserIndex >= matches.length && matches.length > 0 && (
+            <div className="flex items-center justify-center h-full">
+              <Card className="w-full max-w-sm mx-4">
+                <CardContent className="p-6 text-center">
+                  <Heart className="w-8 h-8 text-primary mx-auto mb-4" />
+                  <p className="font-medium mb-2">You've seen everyone!</p>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Check back later for new people
+                  </p>
+                  <Button onClick={() => setCurrentUserIndex(0)} className="bg-gradient-social text-white">
+                    Start Over
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          {!loading && !error && currentUser && (
+            <div className="p-4 h-full">
+              <Card className="h-full bg-card/50 backdrop-blur-xl border-0 shadow-xl overflow-hidden">
+                <CardContent className="p-0 h-full flex flex-col">
+                  <div className="flex-1 p-6">
+                    {/* User Info */}
+                    <div className="flex items-center gap-4 mb-6">
+                      <Avatar className="w-16 h-16 border-2 border-primary">
+                        <AvatarImage src={currentUser.avatar_url} />
+                        <AvatarFallback className="bg-gradient-social text-white font-semibold">
+                          {currentUser.display_name?.[0]?.toUpperCase() || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold">{currentUser.display_name}</h3>
+                        <p className="text-muted-foreground">@{currentUser.username}</p>
+                        {currentUser.distance_km && (
+                          <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1">
+                            <MapPin className="w-3 h-3" />
+                            {currentUser.distance_km < 1 
+                              ? "Less than 1km away"
+                              : `${Math.round(currentUser.distance_km)}km away`
+                            }
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Bio */}
+                    {currentUser.bio && (
+                      <div className="mb-4">
+                        <p className="text-foreground leading-relaxed">{currentUser.bio}</p>
+                      </div>
+                    )}
+
+                    {/* Shared Interests */}
+                    <div className="mb-6">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Heart className="w-4 h-4 text-primary" />
+                        <span className="font-medium text-sm">
+                          {currentUser.shared_interests_count} shared interests
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground mb-2">
-                    Based on your common interests and location
-                  </div>
-                </div>
 
-                <div className="flex gap-4">
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="flex-1"
-                    onClick={nextUser}
-                  >
-                    <X className="h-5 w-5 mr-2" />
-                    Pass
-                  </Button>
-                  <Button 
-                    size="lg" 
-                    className="flex-1"
-                    onClick={handleConnect}
-                  >
-                    <Heart className="h-5 w-5 mr-2" />
-                    Connect
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+                  {/* Action Buttons */}
+                  <div className="p-6 pt-0">
+                    <div className="flex gap-4">
+                      <Button
+                        onClick={nextUser}
+                        variant="outline"
+                        className="flex-1 h-12 border-border/50"
+                      >
+                        <X className="w-5 h-5 mr-2" />
+                        Pass
+                      </Button>
+                      <Button
+                        onClick={handleConnect}
+                        className="flex-1 h-12 bg-gradient-social text-white font-medium shadow-glow"
+                      >
+                        <Heart className="w-5 h-5 mr-2" />
+                        Connect
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
-      </main>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-card/90 backdrop-blur-xl border-t border-border/50 safe-area-pb">
+        <div className="flex items-center justify-around py-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex flex-col items-center gap-1 h-auto py-2 text-primary"
+          >
+            <MapPin className="w-5 h-5" />
+            <span className="text-xs font-medium">Discover</span>
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/connections')}
+            className="flex flex-col items-center gap-1 h-auto py-2 text-muted-foreground hover:text-primary"
+          >
+            <Users className="w-5 h-5" />
+            <span className="text-xs">Connections</span>
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/messages')}
+            className="flex flex-col items-center gap-1 h-auto py-2 text-muted-foreground hover:text-primary"
+          >
+            <MessageCircle className="w-5 h-5" />
+            <span className="text-xs">Messages</span>
+          </Button>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => navigate('/home')}
+            className="flex flex-col items-center gap-1 h-auto py-2 text-muted-foreground hover:text-primary"
+          >
+            <Home className="w-5 h-5" />
+            <span className="text-xs">Profile</span>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };
