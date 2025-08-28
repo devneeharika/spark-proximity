@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/components/AuthProvider";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import SignUp from "./pages/SignUp";
+import Profile from "./pages/Profile";
 import ProfileSetup from "./pages/ProfileSetup";
 import Discovery from "./pages/Discovery";
 import Connections from "./pages/Connections";
@@ -24,6 +26,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Discovery />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/profile-setup" element={<ProfileSetup />} />
             <Route path="/home" element={<Index />} />
             <Route path="/connections" element={<Connections />} />

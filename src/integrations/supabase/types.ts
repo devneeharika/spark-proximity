@@ -68,6 +68,56 @@ export type Database = {
         }
         Relationships: []
       }
+      interests_hierarchy: {
+        Row: {
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_custom: boolean
+          level: number
+          name: string
+          parent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_custom?: boolean
+          level?: number
+          name: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_custom?: boolean
+          level?: number
+          name?: string
+          parent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interests_hierarchy_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "interests_hierarchy"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           content: string
@@ -106,8 +156,12 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          date_of_birth: string | null
           display_name: string | null
+          first_name: string | null
           id: string
+          last_name: string | null
+          phone_number: string | null
           updated_at: string
           user_id: string
           username: string | null
@@ -116,8 +170,12 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string | null
+          first_name?: string | null
           id?: string
+          last_name?: string | null
+          phone_number?: string | null
           updated_at?: string
           user_id: string
           username?: string | null
@@ -126,8 +184,12 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          date_of_birth?: string | null
           display_name?: string | null
+          first_name?: string | null
           id?: string
+          last_name?: string | null
+          phone_number?: string | null
           updated_at?: string
           user_id?: string
           username?: string | null
@@ -137,23 +199,33 @@ export type Database = {
       user_interests: {
         Row: {
           created_at: string
+          hierarchy_id: string | null
           id: string
           interest_id: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          hierarchy_id?: string | null
           id?: string
           interest_id: string
           user_id: string
         }
         Update: {
           created_at?: string
+          hierarchy_id?: string | null
           id?: string
           interest_id?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "user_interests_hierarchy_id_fkey"
+            columns: ["hierarchy_id"]
+            isOneToOne: false
+            referencedRelation: "interests_hierarchy"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "user_interests_interest_id_fkey"
             columns: ["interest_id"]

@@ -135,138 +135,57 @@ const Auth = () => {
         {/* Auth Form */}
         <Card className="backdrop-blur-xl bg-card/80 shadow-2xl border-0 animate-scale-in" style={{animationDelay: '0.4s'}}>
           <CardContent className="p-6">
-            <Tabs defaultValue="signin" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6 bg-secondary/50">
-                <TabsTrigger value="signin" className="data-[state=active]:bg-primary data-[state=active]:text-white">
-                  Sign In
-                </TabsTrigger>
-                <TabsTrigger value="signup" className="data-[state=active]:bg-primary data-[state=active]:text-white">
-                  Sign Up
-                </TabsTrigger>
-              </TabsList>
+            <form onSubmit={handleSignIn} className="space-y-4">
+              <CardHeader className="px-0 pb-4">
+                <CardTitle className="text-center">Welcome Back</CardTitle>
+                <CardDescription className="text-center">
+                  Sign in to your account to continue
+                </CardDescription>
+              </CardHeader>
               
-              <TabsContent value="signin">
-                <form onSubmit={handleSignIn} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-medium">Email</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      disabled={isLoading}
-                      className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm font-medium">Password</Label>
-                    <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      placeholder="Enter your password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      required
-                      disabled={isLoading}
-                      className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
-                    />
-                  </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full h-12 bg-gradient-social hover:shadow-glow transition-all duration-300 text-white font-medium" 
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Signing In...
-                      </>
-                    ) : (
-                      'Sign In'
-                    )}
-                  </Button>
-                </form>
-              </TabsContent>
-              
-              <TabsContent value="signup">
-                <form onSubmit={handleSignUp} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-email" className="text-sm font-medium">Email</Label>
-                    <Input
-                      id="signup-email"
-                      name="email"
-                      type="email"
-                      placeholder="Enter your email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      disabled={isLoading}
-                      className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="username" className="text-sm font-medium">Username</Label>
-                    <Input
-                      id="username"
-                      name="username"
-                      type="text"
-                      placeholder="Choose a username"
-                      value={formData.username}
-                      onChange={handleInputChange}
-                      required
-                      disabled={isLoading}
-                      className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="displayName" className="text-sm font-medium">Display Name</Label>
-                    <Input
-                      id="displayName"
-                      name="displayName"
-                      type="text"
-                      placeholder="Your display name"
-                      value={formData.displayName}
-                      onChange={handleInputChange}
-                      required
-                      disabled={isLoading}
-                      className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="signup-password" className="text-sm font-medium">Password</Label>
-                    <Input
-                      id="signup-password"
-                      name="password"
-                      type="password"
-                      placeholder="Create a password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      required
-                      disabled={isLoading}
-                      className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
-                    />
-                  </div>
-                  <Button 
-                    type="submit" 
-                    className="w-full h-12 bg-gradient-social hover:shadow-glow transition-all duration-300 text-white font-medium" 
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating Account...
-                      </>
-                    ) : (
-                      'Sign Up'
-                    )}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                  disabled={isLoading}
+                  className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                  disabled={isLoading}
+                  className="h-12 bg-background/50 border-border/50 focus:border-primary transition-colors"
+                />
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full h-12 bg-gradient-social hover:shadow-glow transition-all duration-300 text-white font-medium" 
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
+              </Button>
+            </form>
           </CardContent>
         </Card>
 
@@ -274,6 +193,19 @@ const Auth = () => {
         <p className="text-center text-sm text-muted-foreground mt-6 animate-fade-in" style={{animationDelay: '0.6s'}}>
           By continuing, you agree to our Terms & Privacy Policy
         </p>
+
+        {/* Sign Up Link */}
+        <div className="text-center mt-4">
+          <p className="text-muted-foreground text-sm">
+            Don't have an account?{' '}
+            <button
+              onClick={() => navigate('/signup')}
+              className="text-primary hover:underline font-medium"
+            >
+              Sign Up
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );
