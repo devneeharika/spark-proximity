@@ -167,13 +167,22 @@ const ProfileSetup = () => {
                     </div>
                   )}
                 </div>
-                <Button 
-                  onClick={() => setActiveTab("basic")}
-                  className="w-full bg-white text-primary hover:bg-white/90"
-                  disabled={!profile?.avatar_url}
-                >
-                  Continue to Basic Info
-                </Button>
+                <div className="flex gap-3 w-full">
+                  <Button 
+                    variant="outline"
+                    onClick={() => setActiveTab("basic")}
+                    className="flex-1 border-white/20 text-white hover:bg-white/10"
+                  >
+                    Skip for now
+                  </Button>
+                  <Button 
+                    onClick={() => setActiveTab("basic")}
+                    className="flex-1 bg-white text-primary hover:bg-white/90"
+                    disabled={!profile?.avatar_url}
+                  >
+                    Continue
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
