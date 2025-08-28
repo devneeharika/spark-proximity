@@ -96,11 +96,7 @@ export const useAuthProvider = () => {
       
       if (error) return { error };
       
-      if (data.user) {
-        // Force page reload for clean state
-        window.location.href = '/';
-      }
-      
+      // Don't redirect here - let the auth state change handle it
       return { error: null };
     } catch (error) {
       return { error };

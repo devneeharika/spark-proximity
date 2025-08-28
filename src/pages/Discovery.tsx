@@ -23,7 +23,7 @@ const Discovery = () => {
   const [currentUserIndex, setCurrentUserIndex] = useState(0);
   const [locationEnabled, setLocationEnabled] = useState(false);
 
-  // Redirect to auth if not logged in
+  // Redirect to auth if not logged in (but only after loading is complete)
   useEffect(() => {
     if (!user) {
       navigate('/auth');
