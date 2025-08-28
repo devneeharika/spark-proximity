@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useProfile } from '@/hooks/useProfile';
@@ -19,8 +19,15 @@ const Profile = () => {
   const { toast } = useToast();
   
   const [isEditingBio, setIsEditingBio] = useState(false);
-  const [bioText, setBioText] = useState(profile?.bio || '');
+  const [bioText, setBioText] = useState('');
   const [isEditingInterests, setIsEditingInterests] = useState(false);
+
+  // Update bioText when profile loads
+  useEffect(() => {
+    if (profile?.bio !== undefined) {
+      setBioText(profile.bio || '');
+    }
+  }, [profile?.bio]);
 
   const handleSaveBio = async () => {
     await updateProfile({ bio: bioText });
