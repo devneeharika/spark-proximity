@@ -96,17 +96,17 @@ const ProfileSetup = () => {
   return (
     <div className="min-h-screen bg-gradient-primary">
       {/* Header */}
-      <div className="glass-panel border-b border-white/10">
+      <div className="glass-panel border-b border-border/20">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" onClick={() => navigate('/')} className="text-white hover:bg-white/10">
+            <Button variant="glass-outline" size="sm" onClick={() => navigate('/')}>
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-white">
+              <h1 className="text-xl font-bold text-foreground">
                 {profile ? 'Edit Profile' : 'Create Profile'}
               </h1>
-              <p className="text-sm text-white/70">
+              <p className="text-sm text-muted-foreground">
                 {completedSteps}/3 steps completed
               </p>
             </div>
@@ -116,7 +116,7 @@ const ProfileSetup = () => {
               <div
                 key={step}
                 className={`w-2 h-2 rounded-full transition-colors ${
-                  step < completedSteps ? 'bg-white' : 'bg-white/30'
+                  step < completedSteps ? 'bg-primary' : 'bg-muted'
                 }`}
               />
             ))}
@@ -126,16 +126,16 @@ const ProfileSetup = () => {
 
       <main className="container mx-auto px-4 py-6 max-w-md">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-white/10 glass-panel border-white/20">
-            <TabsTrigger value="avatar" className="data-[state=active]:bg-white data-[state=active]:text-primary text-white/70">
+          <TabsList className="grid w-full grid-cols-3 glass-panel">
+            <TabsTrigger value="avatar" className="data-[state=active]:bg-primary-foreground data-[state=active]:text-primary text-foreground/70">
               <Camera className="h-4 w-4 mr-2" />
               Photo
             </TabsTrigger>
-            <TabsTrigger value="basic" className="data-[state=active]:bg-white data-[state=active]:text-primary text-white/70">
+            <TabsTrigger value="basic" className="data-[state=active]:bg-primary-foreground data-[state=active]:text-primary text-foreground/70">
               <User className="h-4 w-4 mr-2" />
               Info
             </TabsTrigger>
-            <TabsTrigger value="interests" className="data-[state=active]:bg-white data-[state=active]:text-primary text-white/70">
+            <TabsTrigger value="interests" className="data-[state=active]:bg-primary-foreground data-[state=active]:text-primary text-foreground/70">
               <Heart className="h-4 w-4 mr-2" />
               Interests
             </TabsTrigger>
@@ -143,13 +143,13 @@ const ProfileSetup = () => {
 
           {/* Avatar Upload Tab */}
           <TabsContent value="avatar" className="mt-6">
-            <Card className="glass-panel border-white/20 bg-white/5">
+            <Card className="glass-panel">
               <CardHeader className="text-center">
-                <CardTitle className="text-white flex items-center justify-center gap-2">
-                  <Sparkles className="h-5 w-5 text-gradient-end" />
+                <CardTitle className="text-foreground flex items-center justify-center gap-2">
+                  <Sparkles className="h-5 w-5 text-accent" />
                   Choose Your Photo
                 </CardTitle>
-                <CardDescription className="text-white/70">
+                <CardDescription className="text-muted-foreground">
                   Add a profile picture so others can recognize you
                 </CardDescription>
               </CardHeader>
@@ -161,41 +161,41 @@ const ProfileSetup = () => {
                 />
                 <div className="text-center">
                   {profile?.avatar_url && (
-                    <div className="flex items-center gap-2 text-white/70 text-sm">
-                      <Check className="h-4 w-4 text-green-400" />
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                      <Check className="h-4 w-4 text-green-500" />
                       Profile photo added
                     </div>
                   )}
                 </div>
-                <div className="flex gap-3 w-full">
-                  <Button 
-                    variant="outline"
-                    onClick={() => setActiveTab("basic")}
-                    className="flex-1 border-white/20 text-white hover:bg-white/10"
-                  >
-                    Skip for now
-                  </Button>
-                  <Button 
-                    onClick={() => setActiveTab("basic")}
-                    className="flex-1 bg-white text-primary hover:bg-white/90"
-                    disabled={!profile?.avatar_url}
-                  >
-                    Continue
-                  </Button>
-                </div>
+                  <div className="flex gap-3 w-full">
+                    <Button 
+                      variant="glass-outline"
+                      onClick={() => setActiveTab("basic")}
+                      className="flex-1"
+                    >
+                      Skip for now
+                    </Button>
+                    <Button 
+                      onClick={() => setActiveTab("basic")}
+                      className="flex-1"
+                      disabled={!profile?.avatar_url}
+                    >
+                      Continue
+                    </Button>
+                  </div>
               </CardContent>
             </Card>
           </TabsContent>
 
           {/* Basic Info Tab */}
           <TabsContent value="basic" className="mt-6">
-            <Card className="glass-panel border-white/20 bg-white/5">
+            <Card className="glass-panel">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <User className="h-5 w-5 text-gradient-end" />
+                <CardTitle className="text-foreground flex items-center gap-2">
+                  <User className="h-5 w-5 text-accent" />
                   Tell Us About You
                 </CardTitle>
-                <CardDescription className="text-white/70">
+                <CardDescription className="text-muted-foreground">
                   This information helps others find and connect with you
                 </CardDescription>
               </CardHeader>
@@ -207,18 +207,18 @@ const ProfileSetup = () => {
                       name="username"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-white">Username</FormLabel>
+                          <FormLabel className="text-foreground">Username</FormLabel>
                           <FormControl>
                             <Input
                               {...field}
                               placeholder="@johndoe"
-                              className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
+                              className="glass-panel"
                             />
                           </FormControl>
-                          <FormDescription className="text-white/60 text-xs">
+                          <FormDescription className="text-muted-foreground text-xs">
                             {field.value?.length || 0}/20 characters
                           </FormDescription>
-                          <FormMessage className="text-red-300" />
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -228,18 +228,18 @@ const ProfileSetup = () => {
                       name="display_name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-white">Display Name</FormLabel>
+                          <FormLabel className="text-foreground">Display Name</FormLabel>
                           <FormControl>
                             <Input
                               {...field}
                               placeholder="John Doe"
-                              className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40"
+                              className="glass-panel"
                             />
                           </FormControl>
-                          <FormDescription className="text-white/60 text-xs">
+                          <FormDescription className="text-muted-foreground text-xs">
                             {field.value?.length || 0}/50 characters
                           </FormDescription>
-                          <FormMessage className="text-red-300" />
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -249,19 +249,19 @@ const ProfileSetup = () => {
                       name="bio"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-white">Bio</FormLabel>
+                          <FormLabel className="text-foreground">Bio</FormLabel>
                           <FormControl>
                             <Textarea
                               {...field}
                               placeholder="Tell others about yourself, your interests, what you're looking to connect about..."
                               rows={4}
-                              className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white/40 resize-none"
+                              className="glass-panel resize-none"
                             />
                           </FormControl>
-                          <FormDescription className="text-white/60 text-xs">
+                          <FormDescription className="text-muted-foreground text-xs">
                             {field.value?.length || 0}/300 characters
                           </FormDescription>
-                          <FormMessage className="text-red-300" />
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -269,16 +269,16 @@ const ProfileSetup = () => {
                     <div className="flex gap-3">
                       <Button
                         type="button"
-                        variant="outline"
+                        variant="glass-outline"
                         onClick={() => setActiveTab("avatar")}
-                        className="flex-1 border-white/20 text-white hover:bg-white/10"
+                        className="flex-1"
                       >
                         Back
                       </Button>
                       <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 bg-white text-primary hover:bg-white/90"
+                        className="flex-1"
                       >
                         {isSubmitting ? (
                           <>
@@ -298,13 +298,13 @@ const ProfileSetup = () => {
 
           {/* Interests Tab */}
           <TabsContent value="interests" className="mt-6">
-            <Card className="glass-panel border-white/20 bg-white/5">
+            <Card className="glass-panel">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Heart className="h-5 w-5 text-gradient-end" />
+                <CardTitle className="text-foreground flex items-center gap-2">
+                  <Heart className="h-5 w-5 text-accent" />
                   Your Interests ({userInterests.length})
                 </CardTitle>
-                <CardDescription className="text-white/70">
+                <CardDescription className="text-muted-foreground">
                   {userInterests.length > 0 
                     ? 'Great choices! Add more or tap to remove any.'
                     : 'Select interests to find people with similar passions nearby'
@@ -314,14 +314,14 @@ const ProfileSetup = () => {
               <CardContent className="space-y-6">
                 {/* Selected Interests Preview */}
                 {userInterests.length > 0 && (
-                  <div className="p-4 rounded-lg bg-white/10 border border-white/20">
-                    <h4 className="text-white font-medium mb-3 text-sm">Your Selected Interests:</h4>
+                  <div className="p-4 rounded-lg glass-panel">
+                    <h4 className="text-foreground font-medium mb-3 text-sm">Your Selected Interests:</h4>
                     <div className="flex flex-wrap gap-2">
                       {userInterests.map((userInterest) => (
                         <Badge 
                           key={userInterest.id} 
                           variant="secondary"
-                          className="bg-white/20 text-white border-white/20 cursor-pointer hover:bg-red-500/20 hover:border-red-400/50 transition-all"
+                          className="cursor-pointer hover:bg-destructive/20 hover:border-destructive/50 transition-all"
                           onClick={() => toggleInterest(userInterest.interest_id)}
                         >
                           {userInterest.interest.icon} {userInterest.interest.name}
@@ -335,14 +335,14 @@ const ProfileSetup = () => {
                 {/* Interest Categories */}
                 {interestsLoading ? (
                   <div className="text-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-white mx-auto mb-2" />
-                    <p className="text-white/70">Loading interests...</p>
+                    <Loader2 className="h-6 w-6 animate-spin text-foreground mx-auto mb-2" />
+                    <p className="text-muted-foreground">Loading interests...</p>
                   </div>
                 ) : (
                   <div className="space-y-6">
                     {Object.entries(interestsByCategory).map(([category, interests]) => (
                       <div key={category}>
-                        <h3 className="text-white font-semibold mb-3 text-lg">
+                        <h3 className="text-foreground font-semibold mb-3 text-lg">
                           {category}
                         </h3>
                         <div className="flex flex-wrap gap-2">
@@ -354,8 +354,8 @@ const ProfileSetup = () => {
                                 variant={selected ? "default" : "outline"}
                                 className={`cursor-pointer transition-all ${
                                   selected 
-                                    ? 'bg-white text-primary border-white shadow-glow' 
-                                    : 'bg-white/5 text-white/80 border-white/30 hover:bg-white/15 hover:border-white/50'
+                                    ? 'shadow-glow' 
+                                    : 'hover:bg-accent/15'
                                 }`}
                                 onClick={() => toggleInterest(interest.id)}
                               >
@@ -378,15 +378,15 @@ const ProfileSetup = () => {
                 <div className="flex gap-3 pt-4">
                   <Button
                     type="button"
-                    variant="outline"
+                    variant="glass-outline"
                     onClick={() => setActiveTab("basic")}
-                    className="flex-1 border-white/20 text-white hover:bg-white/10"
+                    className="flex-1"
                   >
                     Back
                   </Button>
                   <Button
                     onClick={() => navigate('/')}
-                    className="flex-1 bg-white text-primary hover:bg-white/90"
+                    className="flex-1"
                     disabled={userInterests.length === 0}
                   >
                     Complete Setup

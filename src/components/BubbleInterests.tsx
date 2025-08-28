@@ -138,22 +138,21 @@ export const BubbleInterests = ({ selectedInterests, onInterestToggle, onCustomI
         <div className="flex items-center gap-3">
           {breadcrumb.length > 0 && (
             <Button
-              variant="ghost"
+              variant="glass-outline"
               size="sm"
               onClick={navigateBack}
-              className="text-white hover:bg-white/10"
             >
               <ArrowLeft className="h-4 w-4" />
             </Button>
           )}
           <div>
-            <h3 className="text-white font-semibold">
+            <h3 className="text-foreground font-semibold">
               {breadcrumb.length > 0 
                 ? breadcrumb[breadcrumb.length - 1].name 
                 : 'Choose Your Interests'
               }
             </h3>
-            <p className="text-white/70 text-sm">
+            <p className="text-muted-foreground text-sm">
               {breadcrumb.length > 0 
                 ? 'Tap bubbles to explore or select'
                 : 'Tap bubbles to explore subcategories'
@@ -162,20 +161,19 @@ export const BubbleInterests = ({ selectedInterests, onInterestToggle, onCustomI
           </div>
         </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowCustomInput(true)}
-          className="border-white/20 text-white hover:bg-white/10"
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Custom
-        </Button>
+            <Button
+              variant="glass-outline"
+              size="sm"
+              onClick={() => setShowCustomInput(true)}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Custom
+            </Button>
       </div>
 
       {/* Breadcrumb */}
       {breadcrumb.length > 0 && (
-        <div className="flex items-center gap-2 mb-4 text-sm text-white/70">
+        <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
           <span>Interests</span>
           {breadcrumb.map((crumb, index) => (
             <span key={crumb.id}>
@@ -188,7 +186,7 @@ export const BubbleInterests = ({ selectedInterests, onInterestToggle, onCustomI
                     loadChildren(newBreadcrumb[0]);
                   }
                 }}
-                className="hover:text-white"
+                className="hover:text-foreground"
               >
                 {crumb.name}
               </button>
@@ -199,12 +197,12 @@ export const BubbleInterests = ({ selectedInterests, onInterestToggle, onCustomI
 
       {/* Search */}
       <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 h-4 w-4" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
         <Input
           placeholder="Search interests..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="bg-white/10 border-white/20 text-white placeholder:text-white/50 pl-10"
+          className="glass-panel pl-10"
         />
       </div>
 
@@ -213,30 +211,28 @@ export const BubbleInterests = ({ selectedInterests, onInterestToggle, onCustomI
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/10 rounded-lg p-4 mb-6 border border-white/20"
+          className="glass-panel rounded-lg p-4 mb-6"
         >
           <div className="flex gap-2">
             <Input
               placeholder="Enter custom interest..."
               value={customInterestName}
               onChange={(e) => setCustomInterestName(e.target.value)}
-              className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+              className="glass-panel"
               onKeyPress={(e) => e.key === 'Enter' && handleCustomInterest()}
             />
             <Button
               onClick={handleCustomInterest}
               disabled={!customInterestName.trim()}
-              className="bg-white text-primary hover:bg-white/90"
             >
               Add
             </Button>
             <Button
-              variant="outline"
+              variant="glass-outline"
               onClick={() => {
                 setShowCustomInput(false);
                 setCustomInterestName('');
               }}
-              className="border-white/20 text-white hover:bg-white/10"
             >
               Cancel
             </Button>
@@ -245,11 +241,11 @@ export const BubbleInterests = ({ selectedInterests, onInterestToggle, onCustomI
       )}
 
       {/* Bubble Container */}
-      <div className="relative min-h-[300px] bg-white/5 rounded-2xl p-8 overflow-hidden">
+      <div className="relative min-h-[300px] glass-panel rounded-2xl p-8 overflow-hidden">
         <AnimatePresence mode="wait">
           {loading ? (
             <div className="flex items-center justify-center h-32">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
           ) : (
             <motion.div
@@ -281,8 +277,8 @@ export const BubbleInterests = ({ selectedInterests, onInterestToggle, onCustomI
                           relative w-24 h-24 rounded-full flex flex-col items-center justify-center
                           transition-all duration-300 border-2 cursor-pointer
                           ${isSelected 
-                            ? 'bg-white text-primary border-white shadow-glow' 
-                            : 'bg-white/10 text-white border-white/30 hover:bg-white/20 hover:border-white/50'
+                            ? 'bg-primary text-primary-foreground border-primary shadow-glow' 
+                            : 'glass-panel hover:bg-primary/10 hover:border-primary/20'
                           }
                         `}
                       >
@@ -298,7 +294,7 @@ export const BubbleInterests = ({ selectedInterests, onInterestToggle, onCustomI
                             animate={{ scale: 1 }}
                             className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center"
                           >
-                            <Check className="w-4 h-4 text-white" />
+                            <Check className="w-4 h-4 text-primary-foreground" />
                           </motion.div>
                         )}
                         
@@ -309,11 +305,11 @@ export const BubbleInterests = ({ selectedInterests, onInterestToggle, onCustomI
                       </motion.button>
                       
                       {/* Tooltip on hover */}
-                      {interest.description && (
-                        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black/80 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-                          {interest.description}
-                        </div>
-                      )}
+                        {interest.description && (
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+                            {interest.description}
+                          </div>
+                        )}
                     </motion.div>
                   );
                 })}
@@ -328,8 +324,7 @@ export const BubbleInterests = ({ selectedInterests, onInterestToggle, onCustomI
                 >
                   <Button
                     onClick={() => onInterestToggle(breadcrumb[breadcrumb.length - 1].id)}
-                    variant="outline"
-                    className="border-white/20 text-white hover:bg-white/10"
+                    variant="glass-outline"
                   >
                     Select "{breadcrumb[breadcrumb.length - 1].name}"
                   </Button>

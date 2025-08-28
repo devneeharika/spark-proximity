@@ -121,8 +121,20 @@ All colors MUST be HSL.
     @apply bg-card/80 backdrop-blur-xl border border-border/50;
   }
   
+  .glass-panel {
+    @apply bg-card/10 backdrop-blur-xl border border-border/20;
+  }
+  
+  .bg-gradient-primary {
+    background: var(--gradient-social);
+  }
+  
   .social-gradient {
     background: var(--gradient-social);
+  }
+  
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
   }
   
   .hover-lift {
