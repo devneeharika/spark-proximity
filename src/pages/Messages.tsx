@@ -54,10 +54,10 @@ const Messages = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-bg pb-20">
+    <div className="min-h-screen bg-gradient-primary pb-20">
       <header className="p-6 pt-12">
         <div className="flex items-center gap-4 mb-6">
-          <h1 className="text-2xl font-bold">Messages</h1>
+          <h1 className="text-2xl font-bold text-foreground">Messages</h1>
         </div>
       </header>
 

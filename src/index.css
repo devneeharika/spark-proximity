@@ -44,6 +44,7 @@ All colors MUST be HSL.
     /* Social media gradients */
     --gradient-social: linear-gradient(135deg, hsl(315 100% 51%) 0%, hsl(262 83% 58%) 50%, hsl(220 100% 60%) 100%);
     --gradient-bg: linear-gradient(135deg, hsl(315 100% 97%) 0%, hsl(262 100% 97%) 100%);
+    --gradient-main: linear-gradient(135deg, hsl(315 100% 51%) 0%, hsl(262 83% 58%) 100%);
     --shadow-glow: 0 0 40px hsl(315 100% 51% / 0.3);
 
     --sidebar-background: 0 0% 98%;
@@ -90,6 +91,7 @@ All colors MUST be HSL.
     /* Dark mode gradients */
     --gradient-social: linear-gradient(135deg, hsl(315 100% 51%) 0%, hsl(262 83% 58%) 50%, hsl(220 100% 60%) 100%);
     --gradient-bg: linear-gradient(135deg, hsl(0 0% 3%) 0%, hsl(0 0% 8%) 100%);
+    --gradient-main: linear-gradient(135deg, hsl(315 100% 51%) 0%, hsl(262 83% 58%) 100%);
     --shadow-glow: 0 0 40px hsl(315 100% 51% / 0.5);
 
     --sidebar-background: 0 0% 8%;
@@ -123,11 +125,16 @@ All colors MUST be HSL.
   }
   
   .glass-panel {
-    @apply bg-card/20 backdrop-blur-xl border border-border text-card-foreground;
+    @apply bg-card/30 backdrop-blur-xl border border-border text-card-foreground;
   }
   
   .bg-gradient-primary {
     background: var(--gradient-social);
+    color: hsl(var(--foreground));
+  }
+  
+  .bg-gradient-main {
+    background: var(--gradient-main);
     color: hsl(var(--foreground));
   }
   

@@ -111,7 +111,7 @@ const Discovery = () => {
   // Show interests setup prompt
   if (userInterests.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-bg flex flex-col items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-primary flex flex-col items-center justify-center px-4">
         <Card className="w-full max-w-md text-center bg-card/80 backdrop-blur-xl border-0 shadow-2xl">
           <CardContent className="p-8">
             <div className="w-16 h-16 bg-gradient-social rounded-full flex items-center justify-center mx-auto mb-6">
@@ -136,7 +136,7 @@ const Discovery = () => {
   const currentUser = matches[currentUserIndex];
 
   return (
-    <div className="min-h-screen bg-gradient-bg relative">
+    <div className="min-h-screen bg-gradient-primary relative">
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-50 p-4 bg-gradient-to-b from-black/20 to-transparent">
         <div className="flex items-center justify-between">
