@@ -141,13 +141,13 @@ const Profile = () => {
                 </AvatarFallback>
               </Avatar>
               
-              <h2 className="text-2xl font-bold text-white mb-1">
+              <h2 className="text-2xl font-bold text-foreground mb-1">
                 {profile.display_name || profile.username}
               </h2>
-              <p className="text-white/70 mb-2">@{profile.username}</p>
+              <p className="text-foreground/90 mb-2">@{profile.username}</p>
               
               {/* Basic Info */}
-              <div className="flex flex-wrap justify-center gap-4 text-sm text-white/60 mb-4">
+              <div className="flex flex-wrap justify-center gap-4 text-sm text-foreground/80 mb-4">
                 {profile.first_name && profile.last_name && (
                   <span className="flex items-center gap-1">
                     <span>{profile.first_name} {profile.last_name}</span>
@@ -171,7 +171,7 @@ const Profile = () => {
             {/* Bio Section */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-white font-semibold">Bio</h3>
+                <h3 className="text-foreground font-semibold">Bio</h3>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -183,7 +183,7 @@ const Profile = () => {
                       setIsEditingBio(true);
                     }
                   }}
-                  className="text-white/70 hover:bg-white/10"
+                  className="text-foreground/80 hover:bg-white/10"
                 >
                   {isEditingBio ? <Save className="h-4 w-4" /> : <Edit3 className="h-4 w-4" />}
                 </Button>
@@ -196,7 +196,7 @@ const Profile = () => {
                     onChange={(e) => setBioText(e.target.value)}
                     placeholder="Tell others about yourself..."
                     rows={4}
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50 resize-none"
+                    className="bg-white/10 border-white/20 text-foreground placeholder:text-foreground/60 resize-none"
                   />
                   <div className="flex gap-2 justify-end">
                     <Button
@@ -206,7 +206,7 @@ const Profile = () => {
                         setIsEditingBio(false);
                         setBioText(profile.bio || '');
                       }}
-                      className="border-white/20 text-white hover:bg-white/10"
+                      className="border-white/20 text-foreground hover:bg-white/10"
                     >
                       <X className="h-4 w-4 mr-2" />
                       Cancel
@@ -222,7 +222,7 @@ const Profile = () => {
                   </div>
                 </div>
               ) : (
-                <p className="text-white/70">
+                <p className="text-foreground/90">
                   {profile.bio || 'No bio yet. Click edit to add one!'}
                 </p>
               )}
@@ -234,14 +234,14 @@ const Profile = () => {
         <Card className="glass-panel border-white/20 bg-white/5">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-white flex items-center gap-2">
+              <CardTitle className="text-foreground flex items-center gap-2">
                 Your Interests ({userInterests.length})
               </CardTitle>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setIsEditingInterests(!isEditingInterests)}
-                className="border-white/20 text-white hover:bg-white/10"
+                className="border-white/20 text-foreground hover:bg-white/10"
               >
                 {isEditingInterests ? 'Done' : 'Edit'}
               </Button>
@@ -262,7 +262,7 @@ const Profile = () => {
                       <Badge
                         key={userInterest.id}
                         variant="secondary"
-                        className="bg-white/20 text-white border-white/20"
+                        className="bg-white/20 text-foreground border-white/20"
                       >
                         <span className="mr-1">{userInterest.interest.icon}</span>
                         {userInterest.interest.name}
@@ -271,7 +271,7 @@ const Profile = () => {
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <p className="text-white/70 mb-4">No interests added yet</p>
+                    <p className="text-foreground/90 mb-4">No interests added yet</p>
                     <Button
                       onClick={() => setIsEditingInterests(true)}
                       className="bg-white text-primary hover:bg-white/90"
