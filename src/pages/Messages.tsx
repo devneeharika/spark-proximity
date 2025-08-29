@@ -76,7 +76,7 @@ const Messages = () => {
                 <p className="text-muted-foreground mb-6">
                   Start connecting with people to begin conversations!
                 </p>
-                <Button onClick={() => navigate('/')} className="bg-gradient-social text-white">
+                <Button onClick={() => navigate('/')} className="bg-gradient-social text-foreground">
                   Discover People
                 </Button>
               </CardContent>
@@ -101,7 +101,7 @@ const Messages = () => {
                       {conversation.avatar_url && (
                         <AvatarImage src={conversation.avatar_url} />
                       )}
-                      <AvatarFallback className="bg-gradient-social text-white">
+                      <AvatarFallback className="bg-gradient-social text-foreground">
                         {conversation.display_name.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -113,7 +113,7 @@ const Messages = () => {
                         </h3>
                         <div className="flex items-center gap-2">
                           {conversation.unread_count > 0 && (
-                            <Badge className="bg-gradient-social text-white border-0">
+                            <Badge className="bg-gradient-social text-foreground border-0">
                               {conversation.unread_count}
                             </Badge>
                           )}

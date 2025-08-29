@@ -242,14 +242,14 @@ export const AvatarUpload: React.FC<AvatarUploadProps> = ({
       <div className="relative">
         <Avatar className="w-32 h-32 border-4 border-primary/20">
           <AvatarImage src={currentAvatarUrl} alt="Profile picture" />
-          <AvatarFallback className="text-2xl bg-gradient-primary text-white">
+          <AvatarFallback className="text-2xl bg-gradient-primary text-foreground">
             <Camera size={32} />
           </AvatarFallback>
         </Avatar>
         
         {(isUploading || isProcessing) && (
           <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
-            <Loader2 className="w-8 h-8 animate-spin text-white" />
+            <Loader2 className="w-8 h-8 animate-spin text-foreground" />
           </div>
         )}
       </div>

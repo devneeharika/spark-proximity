@@ -115,7 +115,7 @@ const Discovery = () => {
         <Card className="w-full max-w-md text-center bg-card/80 backdrop-blur-xl border-0 shadow-2xl">
           <CardContent className="p-8">
             <div className="w-16 h-16 bg-gradient-social rounded-full flex items-center justify-center mx-auto mb-6">
-              <Users className="w-8 h-8 text-white" />
+              <Users className="w-8 h-8 text-foreground" />
             </div>
             <h2 className="text-2xl font-bold mb-4">Setup Your Interests</h2>
             <p className="text-muted-foreground mb-6">
@@ -123,7 +123,7 @@ const Discovery = () => {
             </p>
             <Button 
               onClick={() => navigate('/profile-setup')}
-              className="w-full h-12 bg-gradient-social text-white font-medium"
+              className="w-full h-12 bg-gradient-social text-foreground font-medium"
             >
               Setup Interests
             </Button>
@@ -142,11 +142,11 @@ const Discovery = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-social rounded-xl flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
+              <Zap className="w-5 h-5 text-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-white">Spark</h1>
-              <p className="text-xs text-white/70">
+              <h1 className="text-xl font-bold text-foreground">Spark</h1>
+              <p className="text-xs text-foreground/90">
                 {matches.length - currentUserIndex} people nearby
               </p>
             </div>
@@ -158,7 +158,7 @@ const Discovery = () => {
                 onClick={enableLocation}
                 variant="secondary"
                 size="sm"
-                className="bg-white/20 text-white border-white/30 hover:bg-white/30"
+                className="bg-white/20 text-foreground border-white/30 hover:bg-white/30"
               >
                 <Navigation className="w-4 h-4 mr-2" />
                 Enable Location
@@ -168,7 +168,7 @@ const Discovery = () => {
               onClick={() => navigate('/profile-setup')}
               variant="ghost"
               size="sm"
-              className="text-white hover:bg-white/20"
+              className="text-foreground hover:bg-white/20"
             >
               <Settings className="w-5 h-5" />
             </Button>
@@ -194,7 +194,7 @@ const Discovery = () => {
                     <p className="font-medium">Enable location to see people nearby</p>
                     <p className="text-sm text-muted-foreground">Find connections around you</p>
                   </div>
-                  <Button onClick={enableLocation} size="sm" className="bg-gradient-social text-white">
+                  <Button onClick={enableLocation} size="sm" className="bg-gradient-social text-foreground">
                     Enable
                   </Button>
                 </div>
@@ -211,7 +211,7 @@ const Discovery = () => {
                 <div className="flex items-center gap-3 mb-4">
                   <Avatar className="w-12 h-12 border-2 border-primary">
                     <AvatarImage src={currentUser.avatar_url} />
-                    <AvatarFallback className="bg-gradient-social text-white font-semibold">
+                    <AvatarFallback className="bg-gradient-social text-foreground font-semibold">
                       {currentUser.display_name?.[0]?.toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
@@ -262,7 +262,7 @@ const Discovery = () => {
                   <Button
                     onClick={handleConnect}
                     size="sm"
-                    className="flex-1 h-10 bg-gradient-social text-white font-medium shadow-glow"
+                    className="flex-1 h-10 bg-gradient-social text-foreground font-medium shadow-glow"
                   >
                     <Heart className="w-4 h-4 mr-2" />
                     Connect
@@ -323,7 +323,7 @@ const Discovery = () => {
                 <p className="text-sm text-muted-foreground mb-4">
                   Check back later for new people
                 </p>
-                <Button onClick={() => setCurrentUserIndex(0)} className="bg-gradient-social text-white">
+                <Button onClick={() => setCurrentUserIndex(0)} className="bg-gradient-social text-foreground">
                   Start Over
                 </Button>
               </CardContent>

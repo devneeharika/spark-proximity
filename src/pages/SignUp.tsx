@@ -174,19 +174,19 @@ const SignUp = () => {
         {/* Header */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-2xl mb-4 backdrop-blur-sm">
-            <Zap className="w-8 h-8 text-white" />
+            <Zap className="w-8 h-8 text-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">
+          <h1 className="text-2xl font-bold text-foreground mb-2">
             Create Account
           </h1>
-          <p className="text-white/70 text-sm">
+          <p className="text-foreground/90 text-sm">
             Step {currentStep} of {totalSteps}
           </p>
           
           {/* Progress bar */}
           <div className="w-full bg-white/20 rounded-full h-2 mt-4">
             <div 
-              className="bg-white rounded-full h-2 transition-all duration-300"
+              className="bg-foreground rounded-full h-2 transition-all duration-300"
               style={{ width: `${(currentStep / totalSteps) * 100}%` }}
             />
           </div>
@@ -198,29 +198,29 @@ const SignUp = () => {
             {currentStep === 1 && (
               <div className="space-y-6">
                 <div className="text-center">
-                  <User className="w-12 h-12 text-white mx-auto mb-3" />
-                  <CardTitle className="text-white text-xl mb-2">What's your name?</CardTitle>
-                  <CardDescription className="text-white/70">
+                  <User className="w-12 h-12 text-foreground mx-auto mb-3" />
+                  <CardTitle className="text-foreground text-xl mb-2">What's your name?</CardTitle>
+                  <CardDescription className="text-foreground/90">
                     Tell us what to call you
                   </CardDescription>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <Label className="text-white">First Name</Label>
+                    <Label className="text-foreground">First Name</Label>
                     <Input
                       value={data.firstName}
                       onChange={(e) => updateData('firstName', e.target.value)}
                       placeholder="Enter your first name"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                      className="bg-white/10 border-white/20 text-foreground placeholder:text-foreground/60"
                     />
                   </div>
                   <div>
-                    <Label className="text-white">Last Name</Label>
+                    <Label className="text-foreground">Last Name</Label>
                     <Input
                       value={data.lastName}
                       onChange={(e) => updateData('lastName', e.target.value)}
                       placeholder="Enter your last name"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                      className="bg-white/10 border-white/20 text-foreground placeholder:text-foreground/60"
                     />
                   </div>
                 </div>
@@ -231,40 +231,40 @@ const SignUp = () => {
             {currentStep === 2 && (
               <div className="space-y-6">
                 <div className="text-center">
-                  <Mail className="w-12 h-12 text-white mx-auto mb-3" />
-                  <CardTitle className="text-white text-xl mb-2">Account Details</CardTitle>
-                  <CardDescription className="text-white/70">
+                  <Mail className="w-12 h-12 text-foreground mx-auto mb-3" />
+                  <CardTitle className="text-foreground text-xl mb-2">Account Details</CardTitle>
+                  <CardDescription className="text-foreground/90">
                     Choose your username and credentials
                   </CardDescription>
                 </div>
                 <div className="space-y-4">
                   <div>
-                    <Label className="text-white">Username</Label>
+                    <Label className="text-foreground">Username</Label>
                     <Input
                       value={data.username}
                       onChange={(e) => updateData('username', e.target.value.toLowerCase())}
                       placeholder="@username"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                      className="bg-white/10 border-white/20 text-foreground placeholder:text-foreground/60"
                     />
                   </div>
                   <div>
-                    <Label className="text-white">Email</Label>
+                    <Label className="text-foreground">Email</Label>
                     <Input
                       type="email"
                       value={data.email}
                       onChange={(e) => updateData('email', e.target.value)}
                       placeholder="your@email.com"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                      className="bg-white/10 border-white/20 text-foreground placeholder:text-foreground/60"
                     />
                   </div>
                   <div>
-                    <Label className="text-white">Password</Label>
+                    <Label className="text-foreground">Password</Label>
                     <Input
                       type="password"
                       value={data.password}
                       onChange={(e) => updateData('password', e.target.value)}
                       placeholder="Create a password"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                      className="bg-white/10 border-white/20 text-foreground placeholder:text-foreground/60"
                     />
                   </div>
                 </div>
@@ -275,19 +275,19 @@ const SignUp = () => {
             {currentStep === 3 && (
               <div className="space-y-6">
                 <div className="text-center">
-                  <Calendar className="w-12 h-12 text-white mx-auto mb-3" />
-                  <CardTitle className="text-white text-xl mb-2">When were you born?</CardTitle>
-                  <CardDescription className="text-white/70">
+                  <Calendar className="w-12 h-12 text-foreground mx-auto mb-3" />
+                  <CardTitle className="text-foreground text-xl mb-2">When were you born?</CardTitle>
+                  <CardDescription className="text-foreground/90">
                     This helps us show you age-appropriate content
                   </CardDescription>
                 </div>
                 <div>
-                  <Label className="text-white">Date of Birth</Label>
+                  <Label className="text-foreground">Date of Birth</Label>
                   <Input
                     type="date"
                     value={data.dateOfBirth}
                     onChange={(e) => updateData('dateOfBirth', e.target.value)}
-                    className="bg-white/10 border-white/20 text-white"
+                    className="bg-white/10 border-white/20 text-foreground"
                   />
                 </div>
               </div>
@@ -297,20 +297,20 @@ const SignUp = () => {
             {currentStep === 4 && (
               <div className="space-y-6">
                 <div className="text-center">
-                  <Phone className="w-12 h-12 text-white mx-auto mb-3" />
-                  <CardTitle className="text-white text-xl mb-2">Your phone number</CardTitle>
-                  <CardDescription className="text-white/70">
+                  <Phone className="w-12 h-12 text-foreground mx-auto mb-3" />
+                  <CardTitle className="text-foreground text-xl mb-2">Your phone number</CardTitle>
+                  <CardDescription className="text-foreground/90">
                     We'll send you a verification code
                   </CardDescription>
                 </div>
                 <div>
-                  <Label className="text-white">Phone Number</Label>
+                  <Label className="text-foreground">Phone Number</Label>
                   <Input
                     type="tel"
                     value={data.phoneNumber}
                     onChange={(e) => updateData('phoneNumber', e.target.value)}
                     placeholder="+1 (555) 123-4567"
-                    className="bg-white/10 border-white/20 text-white placeholder:text-white/50"
+                    className="bg-white/10 border-white/20 text-foreground placeholder:text-foreground/60"
                   />
                 </div>
               </div>
@@ -320,9 +320,9 @@ const SignUp = () => {
             {currentStep === 5 && (
               <div className="space-y-6">
                 <div className="text-center">
-                  <Phone className="w-12 h-12 text-white mx-auto mb-3" />
-                  <CardTitle className="text-white text-xl mb-2">Verify your number</CardTitle>
-                  <CardDescription className="text-white/70">
+                  <Phone className="w-12 h-12 text-foreground mx-auto mb-3" />
+                  <CardTitle className="text-foreground text-xl mb-2">Verify your number</CardTitle>
+                  <CardDescription className="text-foreground/90">
                     {isOtpSent ? `Enter the code sent to ${data.phoneNumber}` : 'We\'ll send a verification code'}
                   </CardDescription>
                 </div>
@@ -345,16 +345,16 @@ const SignUp = () => {
                 ) : (
                   <div className="space-y-4">
                     <div>
-                      <Label className="text-white">Verification Code</Label>
+                      <Label className="text-foreground">Verification Code</Label>
                       <Input
                         value={otp}
                         onChange={(e) => setOtp(e.target.value)}
                         placeholder="123456"
                         maxLength={6}
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/50 text-center text-2xl tracking-wider"
+                        className="bg-white/10 border-white/20 text-foreground placeholder:text-foreground/60 text-center text-2xl tracking-wider"
                       />
                     </div>
-                    <p className="text-white/60 text-sm text-center">
+                    <p className="text-foreground/80 text-sm text-center">
                       For demo purposes, use: 123456
                     </p>
                   </div>
@@ -367,10 +367,10 @@ const SignUp = () => {
               <div className="space-y-6">
                 <div className="text-center">
                   <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <User className="w-6 h-6 text-white" />
+                    <User className="w-6 h-6 text-foreground" />
                   </div>
-                  <CardTitle className="text-white text-xl mb-2">Add your photo</CardTitle>
-                  <CardDescription className="text-white/70">
+                  <CardTitle className="text-foreground text-xl mb-2">Add your photo</CardTitle>
+                  <CardDescription className="text-foreground/90">
                     Help others recognize you (optional)
                   </CardDescription>
                 </div>
@@ -383,7 +383,7 @@ const SignUp = () => {
                   />
                   
                   {data.avatarUrl && (
-                    <div className="flex items-center gap-2 text-white/70 text-sm mt-4">
+                    <div className="flex items-center gap-2 text-foreground/90 text-sm mt-4">
                       <Check className="h-4 w-4 text-green-400" />
                       Profile photo added
                     </div>
@@ -398,7 +398,7 @@ const SignUp = () => {
                 <Button
                   variant="outline"
                   onClick={prevStep}
-                  className="flex-1 border-white/20 text-white hover:bg-white/10"
+                  className="flex-1 border-white/20 text-foreground hover:bg-white/10"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back
@@ -444,7 +444,7 @@ const SignUp = () => {
                 variant="ghost"
                 onClick={completeSignUp}
                 disabled={isLoading}
-                className="w-full mt-2 text-white/70 hover:bg-white/5"
+                className="w-full mt-2 text-foreground/90 hover:bg-white/5"
               >
                 Skip for now
               </Button>
@@ -454,11 +454,11 @@ const SignUp = () => {
 
         {/* Sign In Link */}
         <div className="text-center mt-6">
-          <p className="text-white/70 text-sm">
+          <p className="text-foreground/90 text-sm">
             Already have an account?{' '}
             <button
               onClick={() => navigate('/auth')}
-              className="text-white hover:underline font-medium"
+              className="text-foreground hover:underline font-medium"
             >
               Sign In
             </button>

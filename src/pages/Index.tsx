@@ -35,7 +35,7 @@ const Index = () => {
       <div className="min-h-screen bg-gradient-primary flex flex-col items-center justify-center px-4">
         <div className="text-center mb-8 animate-fade-in">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-social rounded-2xl mb-6 shadow-glow">
-            <Zap className="w-10 h-10 text-white" />
+            <Zap className="w-10 h-10 text-foreground" />
           </div>
           <h1 className="text-4xl font-bold bg-gradient-social bg-clip-text text-transparent mb-4">
             Welcome to Spark
@@ -45,7 +45,7 @@ const Index = () => {
           </p>
           <Button 
             onClick={() => navigate('/auth')} 
-            className="h-12 px-8 bg-gradient-social text-white font-medium text-lg hover:shadow-glow transition-all duration-300"
+            className="h-12 px-8 bg-gradient-social text-foreground font-medium text-lg hover:shadow-glow transition-all duration-300"
           >
             Get Started
           </Button>
@@ -101,7 +101,7 @@ const Index = () => {
             <div className="flex items-center gap-4">
               <Avatar className="w-16 h-16 border-2 border-primary">
                 <AvatarImage src={profile?.avatar_url} />
-                <AvatarFallback className="bg-gradient-social text-white font-semibold text-lg">
+                <AvatarFallback className="bg-gradient-social text-foreground font-semibold text-lg">
                   {user?.email?.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
@@ -143,7 +143,7 @@ const Index = () => {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-social rounded-xl flex items-center justify-center">
-                  <User className="w-6 h-6 text-white" />
+                  <User className="w-6 h-6 text-foreground" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-foreground">{profile ? 'Edit Profile' : 'Setup Profile'}</h3>
@@ -165,7 +165,7 @@ const Index = () => {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-social rounded-xl flex items-center justify-center">
-                  <MapPin className="w-6 h-6 text-white" />
+                  <MapPin className="w-6 h-6 text-foreground" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-foreground">Discover People</h3>
@@ -182,7 +182,7 @@ const Index = () => {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-social rounded-xl flex items-center justify-center">
-                  <Users className="w-6 h-6 text-white" />
+                  <Users className="w-6 h-6 text-foreground" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-foreground">Manage Connections</h3>
@@ -199,7 +199,7 @@ const Index = () => {
             <CardContent className="p-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-social rounded-xl flex items-center justify-center">
-                  <MessageCircle className="w-6 h-6 text-white" />
+                  <MessageCircle className="w-6 h-6 text-foreground" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-foreground">Messages</h3>
