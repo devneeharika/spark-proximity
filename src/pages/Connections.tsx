@@ -169,44 +169,44 @@ const Connections = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-bg pb-20">
+    <div className="min-h-screen bg-gradient-primary pb-20">
       <header className="p-6 pt-12">
         <div className="flex items-center gap-4 mb-6">
-          <h1 className="text-2xl font-bold">Connections</h1>
+          <h1 className="text-2xl font-bold text-foreground">Connections</h1>
         </div>
       </header>
 
       <main className="px-4 max-w-2xl mx-auto">
         <Tabs defaultValue="accepted" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 glass">
-            <TabsTrigger value="accepted">
+          <TabsList className="grid w-full grid-cols-3 glass-panel">
+            <TabsTrigger value="accepted" className="text-foreground data-[state=active]:text-primary">
               Connections ({acceptedConnections.length})
             </TabsTrigger>
-            <TabsTrigger value="incoming">
+            <TabsTrigger value="incoming" className="text-foreground data-[state=active]:text-primary">
               Incoming ({incomingRequests.length})
             </TabsTrigger>
-            <TabsTrigger value="sent">
+            <TabsTrigger value="sent" className="text-foreground data-[state=active]:text-primary">
               Sent ({sentRequests.length})
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="accepted" className="space-y-4">
             {loading ? (
-              <div className="text-center py-8">Loading connections...</div>
+              <div className="text-center py-8 text-foreground">Loading connections...</div>
             ) : acceptedConnections.length === 0 ? (
               <div className="text-center py-16">
                 <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-xl font-semibold mb-2">No Connections Yet</h3>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">No Connections Yet</h3>
                 <p className="text-muted-foreground mb-4">
                   Start discovering people with shared interests to build your network!
                 </p>
-                <Button onClick={() => navigate('/discovery')}>
+                <Button onClick={() => navigate('/discovery')} className="bg-gradient-social text-white">
                   Discover People
                 </Button>
               </div>
             ) : (
               acceptedConnections.map((connection) => (
-                <Card key={connection.id}>
+                <Card key={connection.id} className="glass-panel">
                   <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <Avatar className="h-12 w-12">
@@ -218,12 +218,12 @@ const Connections = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                      <h4 className="font-semibold">{connection.profile?.display_name}</h4>
+                      <h4 className="font-semibold text-card-foreground">{connection.profile?.display_name}</h4>
                       <p className="text-sm text-muted-foreground">
                         @{connection.profile?.username}
                       </p>
                       {connection.profile?.bio && (
-                        <p className="text-sm mt-2">{connection.profile.bio}</p>
+                        <p className="text-sm mt-2 text-card-foreground">{connection.profile.bio}</p>
                       )}
                       {connection.shared_interests.length > 0 && (
                         <div className="flex flex-wrap gap-1 mt-3">
@@ -243,6 +243,7 @@ const Connections = () => {
                         <Button 
                           size="sm" 
                           onClick={() => navigate('/messages', { state: { recipientId: connection.requester_id === user?.id ? connection.receiver_id : connection.requester_id } })}
+                          className="bg-gradient-social text-white"
                         >
                           Message
                         </Button>
@@ -257,18 +258,18 @@ const Connections = () => {
 
           <TabsContent value="incoming" className="space-y-4">
             {loading ? (
-              <div className="text-center py-8">Loading requests...</div>
+              <div className="text-center py-8 text-foreground">Loading requests...</div>
             ) : incomingRequests.length === 0 ? (
               <div className="text-center py-16">
                 <Clock className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-xl font-semibold mb-2">No Incoming Requests</h3>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">No Incoming Requests</h3>
                 <p className="text-muted-foreground">
                   When people want to connect with you, their requests will appear here.
                 </p>
               </div>
             ) : (
               incomingRequests.map((connection) => (
-                <Card key={connection.id}>
+                <Card key={connection.id} className="glass-panel">
                   <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <Avatar className="h-12 w-12">
@@ -280,12 +281,12 @@ const Connections = () => {
                       </AvatarFallback>
                     </Avatar>
                       <div className="flex-1">
-                        <h4 className="font-semibold">{connection.profile?.display_name}</h4>
+                        <h4 className="font-semibold text-card-foreground">{connection.profile?.display_name}</h4>
                         <p className="text-sm text-muted-foreground">
                           @{connection.profile?.username}
                         </p>
                         {connection.profile?.bio && (
-                          <p className="text-sm mt-2">{connection.profile.bio}</p>
+                          <p className="text-sm mt-2 text-card-foreground">{connection.profile.bio}</p>
                         )}
                         {connection.shared_interests.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-3 mb-4">
@@ -305,12 +306,13 @@ const Connections = () => {
                           <Button 
                             size="sm" 
                             onClick={() => handleConnectionResponse(connection.id, 'accepted')}
+                            className="bg-gradient-social text-white"
                           >
                             <Check className="h-4 w-4 mr-1" />
                             Accept
                           </Button>
                           <Button 
-                            variant="outline" 
+                            variant="glass-outline" 
                             size="sm"
                             onClick={() => handleConnectionResponse(connection.id, 'rejected')}
                           >
@@ -328,18 +330,18 @@ const Connections = () => {
 
           <TabsContent value="sent" className="space-y-4">
             {loading ? (
-              <div className="text-center py-8">Loading sent requests...</div>
+              <div className="text-center py-8 text-foreground">Loading sent requests...</div>
             ) : sentRequests.length === 0 ? (
               <div className="text-center py-16">
                 <Clock className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-                <h3 className="text-xl font-semibold mb-2">No Sent Requests</h3>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">No Sent Requests</h3>
                 <p className="text-muted-foreground">
                   Connection requests you send will appear here while pending.
                 </p>
               </div>
             ) : (
               sentRequests.map((connection) => (
-                <Card key={connection.id}>
+                <Card key={connection.id} className="glass-panel">
                   <CardContent className="p-6">
                   <div className="flex items-start gap-4">
                     <Avatar className="h-12 w-12">
@@ -351,7 +353,7 @@ const Connections = () => {
                       </AvatarFallback>
                     </Avatar>
                       <div className="flex-1">
-                        <h4 className="font-semibold">{connection.profile?.display_name}</h4>
+                        <h4 className="font-semibold text-card-foreground">{connection.profile?.display_name}</h4>
                         <p className="text-sm text-muted-foreground">
                           @{connection.profile?.username}
                         </p>
