@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useMessages } from '@/hooks/useMessages';
 import { MessageThread } from '@/components/MessageThread';
@@ -13,6 +13,7 @@ import BottomNavigation from '@/components/BottomNavigation';
 
 const Messages = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const { conversations, loading } = useMessages();
   const [selectedConversation, setSelectedConversation] = useState<{
@@ -21,6 +22,43 @@ const Messages = () => {
     username: string;
     avatar?: string | null;
   } | null>(null);
+
+  // Check for recipientId from navigation state (when coming from Connections)
+  useEffect(() => {
+    const recipientId = location.state?.recipientId;
+    if (recipientId && user) {
+      // Find the recipient's profile from existing conversations or fetch it
+      const existingConversation = conversations.find(conv => conv.user_id === recipientId);
+      
+      if (existingConversation) {
+        setSelectedConversation({
+          userId: existingConversation.user_id,
+          name: existingConversation.display_name,
+          username: existingConversation.username,
+          avatar: existingConversation.avatar_url
+        });
+      } else {
+        // Fetch recipient profile if not in conversations
+        import('@/integrations/supabase/client').then(({ supabase }) => {
+          supabase
+            .from('profiles')
+            .select('user_id, username, display_name, avatar_url')
+            .eq('user_id', recipientId)
+            .single()
+            .then(({ data }) => {
+              if (data) {
+                setSelectedConversation({
+                  userId: data.user_id,
+                  name: data.display_name || 'User',
+                  username: data.username || 'user',
+                  avatar: data.avatar_url
+                });
+              }
+            });
+        });
+      }
+    }
+  }, [location.state?.recipientId, conversations, user]);
 
   const formatMessageTime = (dateString: string) => {
     const date = new Date(dateString);
